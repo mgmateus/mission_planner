@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+
+	<!-- This line loads the necessary parameters to use the BaseController -->
+    <rosparam file="$(find assay_module)/config/base_controller.yaml" command="load"/>
+
+  <arg name="port" default="/dev/ttyTHS1"/>
+  <arg name="baudrate" default="921600"/>
+
+  <remap from="/zed/zed_node/pose" to="/mavros/vision_pose/pose"/>
+  <remap from="/zed/zed_node/pose_with_covariance" to="/mavros/vision_pose/pose_cov"/>
+
+  <include file="$(find zed_wrapper)/launch/zed.launch"></include>
+  
+  <include file="$(find mavros)/launch/apm.launch">
+	  <arg name="fcu_url" default="$(arg port):$(arg baudrate)"/>
+  </include>
+ 
+</launch>
