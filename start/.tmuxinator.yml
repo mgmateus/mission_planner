@@ -1,0 +1,14 @@
+name: hydrone_FIRA
+root: ./
+startup_window: zed_mavros
+windows:
+
+  - zed_mavros: 
+      layout: tiled
+      panes:
+        - roslaunch mission_planner_pkg include.launch
+        
+  - navigation: 
+      layout: tiled
+      panes:
+        - sleep 20; roslaunch mission_planner_pkg start.launch 
