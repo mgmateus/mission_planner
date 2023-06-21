@@ -3,7 +3,7 @@
 <launch>
 
 	<!-- This line loads the necessary parameters to use the BaseController -->
-  <rosparam file="$(find assay_module)/config/base_controller.yaml" command="load"/>
+  <rosparam file="$(find mission_planner)/config/base_controller.yaml" command="load"/>
 
   <arg name="port" default="/dev/ttyTHS1"/>
   <arg name="baudrate" default="921600"/>

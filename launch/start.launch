@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
     <!-- This line loads the necessary parameters to use the BaseController -->
-    <rosparam file="$(find mission_planner_pkg)/config/base_controller.yaml" command="load"/>
+    <rosparam file="$(find mission_planner)/config/base_controller.yaml" command="load"/>
 
     <!-- This include launch the zed and mavros launch -->
-    <include file="$(find mission_planner_pkg)/launch/include.launch"></include>
+    <include file="$(find mission_planner)/launch/include.launch"></include>
 
     <!-- This runs the task -->
-    <node name="mission_plane_0_node" pkg="mission_planner_pkg" type="main.py"/>
+    <node name="mission_plane_0_node" pkg="mission_planner" type="main.py"/>
 </launch>
