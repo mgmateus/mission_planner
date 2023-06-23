@@ -12,11 +12,7 @@ if __name__ == "__main__":
     with sm_mission:
         altitude = 1.0
 
-        sm_its_flying = smach.StateMachine(outcomes=["succeeded", "aborted", "preempted"],
-                                        input_keys=[],
-                                        output_keys=[],
-                                        child_termination_cb=None,
-                                        outcome_cb=None)
+        sm_its_flying = smach.StateMachine(outcomes=["succeeded", "aborted", "preempted"])
         
         with sm_its_flying:
             smach.StateMachine.add("ARMED", Armed(),
