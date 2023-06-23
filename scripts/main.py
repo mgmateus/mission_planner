@@ -15,14 +15,7 @@ if __name__ == "__main__":
         sm_its_flying = smach.StateMachine(outcomes=["succeeded"])
         
         with sm_its_flying:
-            
-            #######################################
-            smach.StateMachine.add("ARMED", Armed(),
-                                   transitions={
-                                       "wait_for_arming":"ARMED",
-                                        "armed" : "WAIT_FOR_ALTITUDE"
-                                    })
-            
+
             con_wait_for_altitude = smach.Concurrence(outcomes=['wait_for_altitude','ready_to_nav'],
                                     default_outcome = 'wait_for_altitude',
                                     outcome_map={
@@ -33,6 +26,14 @@ if __name__ == "__main__":
                 smach.Concurrence.add('TAKEOFF', TakeOff(altitude))
                 smach.Concurrence.add('READ_ALTITUDE', RangeFinderCheck(altitude))
 
+            
+            #######################################
+            smach.StateMachine.add("ARMED", Armed(),
+                                   transitions={
+                                       "wait_for_arming":"ARMED",
+                                        "armed" : "WAIT_FOR_ALTITUDE"
+                                    })
+            
             
             smach.StateMachine.add("WAIT_FOR_ALTITUDE", con_wait_for_altitude,
                                    transitions={
