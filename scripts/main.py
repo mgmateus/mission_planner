@@ -12,7 +12,7 @@ if __name__ == "__main__":
     with sm_mission:
         altitude = 1.0
 
-        sm_its_flying = smach.StateMachine(outcomes=["succeeded", "aborted", "preempted"])
+        sm_its_flying = smach.StateMachine(outcomes=["succeeded"])
         
         with sm_its_flying:
             smach.StateMachine.add("ARMED", Armed(),
@@ -45,9 +45,7 @@ if __name__ == "__main__":
             
         smach.StateMachine.add("ITS_FLING", sm_its_flying,
                                    transitions={
-                                        "succeeded" : "mission_finished",
-                                        "aborted" : "aborted",
-                                        "preempted" : "preempted"
+                                        "succeeded" : "mission_finished"
                                     })
         
     
