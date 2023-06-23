@@ -93,6 +93,7 @@ class RangeFinderCheck(smach.State):
         self.__altitude = msg.range
 
     def execute(self, userdata):
+        rospy.logwarn(f"altitude: {self.__altitude}, falta: {self.__goal_altitude}")
         if (self.__goal_altitude - self.__altitude) <= 0.1:
             userdata.ready = True
             return 'ready'
