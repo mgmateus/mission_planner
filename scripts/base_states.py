@@ -66,8 +66,12 @@ class TakeOff(smach.State):
         self.__mode = msg.mode
 
     def execute(self, userdata):
-        if userdata.ready:
-            return 'take_off'
+        try:
+            if userdata.ready:
+                return 'take_off'
+            
+        except InvalidStateError as e:
+            pass
         
         if self.__init:
             return 'wait_for_altitude'
