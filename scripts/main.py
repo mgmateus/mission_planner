@@ -22,6 +22,7 @@ if __name__ == "__main__":
                                     })
             
             con_wait_for_altitude = smach.Concurrence(outcomes=['wait_for_altitude','ready_to_nav'],
+                                    default_outcome = 'wait_for_altitude',
                                     outcome_map={'ready_to_nav':
                                         {'TAKEOFF':'take_off',
                                         'READ_ALTITUDE':'ready'}})
