@@ -37,6 +37,7 @@ if __name__ == "__main__":
             
             smach.StateMachine.add("WAIT_FOR_ALTITUDE", con_wait_for_altitude,
                                    transitions={
+                                        'wait_for_autonomous_mode' : "WAIT_FOR_ALTITUDE",
                                         'wait_for_altitude' : "WAIT_FOR_ALTITUDE",
                                         'ready_to_nav' : "LAND"
                                     })
