@@ -55,7 +55,6 @@ class TakeOff(smach.State):
 class TakeOff(smach.State):
     def __init__(self, goal_altitude):
         smach.State.__init__(self, outcomes = ['wait_for_autonomous_mode', 'take_off'], input_keys = ['ready'])
-        
         rospy.Subscriber("/mavros/state", State, self._state_callback)
         
         self.__mode = 'STABILIZE' 
@@ -84,7 +83,7 @@ class TakeOff(smach.State):
 class RangeFinderCheck(smach.State):
     def __init__(self, goal_altitude):
         smach.State.__init__(self, outcomes = ['wait_for_altitude', 'ready'], output_keys = ['ready'])
-        rospy.Subscriber(rospy.Subscriber("/mavros/rangefinder/rangefinder", Range, self._range_finder_callback))
+        rospy.Subscriber("/mavros/rangefinder/rangefinder", Range, self._range_finder_callback)
 
         self.__altitude = 0.0
         self.__goal_altitude = goal_altitude
