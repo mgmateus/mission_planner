@@ -110,8 +110,6 @@ class BaseController():
             self.set_custom_mode("LOITER")
             time.sleep(2)
             response = self.__service_takeoff_proxy(min_pitch, yaw, latitude, longitude, altitude)
-            time.sleep(2)
-            self.set_custom_mode("POSHOLD")
             return response.success
         except rospy.ServiceException as service_exception:
             raise rospy.ServiceException from service_exception
