@@ -2,6 +2,8 @@
 import time
 import rospy
 import smach
+
+from std_msgs.msg import String
 from mavros_msgs.srv import (
     CommandBool,
     CommandTOL,
