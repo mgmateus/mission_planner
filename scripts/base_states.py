@@ -5,7 +5,7 @@ from flight_pkg.base_controller import BaseController
 
 class Armed(smach.State):
     def __init__(self):
-        smach.State.__init__(self, outcomes = ['armed', 'wait_for_arming'])
+        smach.State.__init__(self, outcomes = ['wait_for_arming', 'armed'])
         rospy.Subscriber("/mavros/state", State, self._state_callback)
         
         self.__armed = False  
@@ -14,7 +14,7 @@ class Armed(smach.State):
     def _state_callback(self, msg):
         self.__armed = msg.armed
 
-    def execute(self, status):
+    def execute(self, userdata):
         if self.__armed:
             return 'armed'
         return 'wait_for_arming'
@@ -50,7 +50,7 @@ class TakeOff(smach.State):
 
 class TakeOff(smach.State):
     def __init__(self, altitude):
-        smach.State.__init__(self, outcomes = ['take_off', 'wait_for_autonomous_mode'])
+        smach.State.__init__(self, outcomes = ['wait_for_autonomous_mode', 'take_off'], input_keys = ['ready'])
         
         rospy.Subscriber("/mavros/state", State, self._state_callback)
         
@@ -61,10 +61,14 @@ class TakeOff(smach.State):
     def _state_callback(self, msg):
         self.__mode = msg.mode
 
-    def execute(self):
+    def execute(self, userdata):
+        if userdata.ready:
+            return 'take_off'
+        
         if self.__mode != 'STABILIZE':
             self.__base_controller.takeoff(altitude=self.__altitude)
-            return 'take_off'
+            return 'wait_for_altitude'
+            
         return 'wait_for_autonomous_mode'
     
 
@@ -79,7 +83,7 @@ class Land(smach.State):
 
 class RangeFinderCheck(smach.state):
     def __init__(self, goal_altitude):
-        smach.State.__init__(self, outcomes = ['its_flying', 'wait_for_altitude'], output_keys = ['ready'])
+        smach.State.__init__(self, outcomes = ['wait_for_altitude', 'ready'], output_keys = ['ready'])
         rospy.Subscriber(rospy.Subscriber("/mavros/rangefinder/rangefinder", Range, self._range_finder_callback))
 
         self.__altitude = 0.0
@@ -89,12 +93,12 @@ class RangeFinderCheck(smach.state):
     def _range_finder_callback(self, msg):
         self.__altitude = msg.range
 
-    def execute(self, status):
+    def execute(self, userdata):
         if (self.__goal_altitude - self.__altitude) <= 0.1:
-            status.ready = True
-            return 'its_flying'
+            userdata.ready = True
+            return 'ready'
         else:
-            status.ready = False
+            userdata.ready = False
             return 'wait_for_altitude'
        
 

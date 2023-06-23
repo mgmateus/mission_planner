@@ -7,33 +7,49 @@ if __name__ == "__main__":
     rospy.init_node("mission_plane_0_node")
 
     # Create a SMACH state machine
-    mission = smach.StateMachine(outcomes=['mission_finished'])
+    sm_mission = smach.StateMachine(outcomes=['mission_finished'])
 
-    with mission:
+    with sm_mission:
         altitude = 1.0
-        its_flying = smach.StateMachine(outcomes=["succeeded", "aborted", "preempted"],
+
+        sm_its_flying = smach.StateMachine(outcomes=["succeeded", "aborted", "preempted"],
                                         default_outcome="succeeded",
                                         input_keys=[],
                                         output_keys=[],
                                         child_termination_cb=None,
                                         outcome_cb=None)
         
-        with its_flying:
+        with sm_its_flying:
             smach.StateMachine.add("ARMED", Armed(),
                                    transitions={
                                        "wait_for_arming":"ARMED",
-                                        "armed" : "TAKEOFF"
+                                        "armed" : "WAIT_FOR_ALTITUDE"
                                     })
             
-            smach.StateMachine.add("TAKEOFF", TakeOff(altitude),
+            con_wait_for_altitude = smach.Concurrence(outcomes=['wait_for_altitude','ready_to_nav'],
+                                    default_outcome='wait_for_altitude',
+                                    outcome_map={'ready_to_nav':
+                                        {'TAKEOFF':'take_off',
+                                        'READ_ALTITUDE':'ready'}})
+            
+            with con_wait_for_altitude:
+                smach.Concurrence.add('TAKEOFF', TakeOff(altitude),
+                                      transitions={
+                                        'wait_for_autonomous_mode':'TAKEOFF',
+                                        'wait_for_altitude' : 'TAKEOFF'
+                                    })
+                
+                smach.Concurrence.add('READ_ALTITUDE', RangeFinderCheck(altitude),
+                                      transitions={
+                                        'wait_for_altitude' : 'READ_ALTITUDE'
+                                    })
+            
+
+            smach.StateMachine.add("WAIT_FOR_ALTITUDE", con_wait_for_altitude,
                                    transitions={
-                                       "wait_for_autonomous_mode":"TAKEOFF",
-                                        "take_off" : "READY_TO_NAVIGATION"
+                                        'wait_for_altitude' : "WAIT_FOR_ALTITUDE",
+                                        'ready_to_nav' : "LAND"
                                     })
-            
-            smach.StateMachine.add("READY_TO_NAVIGATION", RangeFinderCheck(altitude),
-                                   transitions={"wait_for_altitude":"READY_TO_NAVIGATION",
-                                                "its_flying" : "ready"})
         
             smach.StateMachine.add("LAND", Land(),
                                    transitions={
