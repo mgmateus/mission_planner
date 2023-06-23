@@ -45,7 +45,9 @@ if __name__ == "__main__":
             
         smach.StateMachine.add("ITS_FLING", sm_its_flying,
                                    transitions={
-                                        "succeeded" : "mission_finished"
+                                        "succeeded" : "mission_finished",
+                                        "aborted" : "aborted",
+                                        "preempted" : "preempted"
                                     })
         
     
