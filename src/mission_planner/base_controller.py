@@ -115,24 +115,24 @@ class BaseController():
             raise rospy.ServiceException from service_exception
 
     def set_custom_mode(self, custom_mode: str = ""):
-            """This method set a custom mode to UAV
+        """This method set a custom mode to UAV
 
-            Keywords arguments:
-            custom_mode -- The custom mode string that specifies the desired mode of the UAV, allowing you to set a specific behavior or flight mode defined in the flight controller or autopilot software.
+        Keywords arguments:
+        custom_mode -- The custom mode string that specifies the desired mode of the UAV, allowing you to set a specific behavior or flight mode defined in the flight controller or autopilot software.
 
-            Possible custom modes:
-            - [STABILIZE, ACRO, ALT_HOLD, AUTO, GUIDED, LOITER, RTL, CIRCLE, POSITION, LAND, OF_LOITER, DRIFT, SPORT, FLIP, AUTOTUNE, POSHOLD, BRAKE, THROW, AVOID_ADSB, GUIDED_NOGPS]
+        Possible custom modes:
+        - [STABILIZE, ACRO, ALT_HOLD, AUTO, GUIDED, LOITER, RTL, CIRCLE, POSITION, LAND, OF_LOITER, DRIFT, SPORT, FLIP, AUTOTUNE, POSHOLD, BRAKE, THROW, AVOID_ADSB, GUIDED_NOGPS]
 
-            Returns:
-            response.mode_sent -- returns true if the service worked correctly.
-            """
-            assert custom_mode in self.__custom_modes
+        Returns:
+        response.mode_sent -- returns true if the service worked correctly.
+        """
+        assert custom_mode in self.__custom_modes
 
-            try:
-                response = self.__service_setmode_proxy(0, custom_mode)
-                return response.mode_sent
-            except rospy.ServiceException as service_exception:
-                raise rospy.ServiceException from service_exception
+        try:
+            response = self.__service_setmode_proxy(0, custom_mode)
+            return response.mode_sent
+        except rospy.ServiceException as service_exception:
+            raise rospy.ServiceException from service_exception
 
     def land(self, min_pitch: float = 0.0, yaw: float = 0.0, latitude: float = 0.0, \
                 longitude: float = 0.0, altitude: float = 0.0) -> bool:
