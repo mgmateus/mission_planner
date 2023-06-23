@@ -23,9 +23,11 @@ if __name__ == "__main__":
                                         "armed" : "WAIT_FOR_ALTITUDE"
                                     })
             
-            con_wait_for_altitude = smach.Concurrence(outcomes=['wait_for_altitude', 'ready_to_nav'],  
+            con_wait_for_altitude = smach.Concurrence(outcomes=['wait_for_altitude', 'ready_to_nav'],
                                     default_outcome = 'wait_for_altitude',
                                     outcome_map={
+                                        #'wait_for_autonomous_mode' : {'TAKEOFF':'wait_for_autonomous_mode'},
+                                        #'wait_for_altitude' : {'TAKEOFF':'wait_for_altitude', 'READ_ALTITUDE':'wait_for_altitude'},
                                         'ready_to_nav': {'TAKEOFF':'take_off','READ_ALTITUDE':'ready'}
                                         })
             
@@ -36,7 +38,8 @@ if __name__ == "__main__":
             
             smach.StateMachine.add("WAIT_FOR_ALTITUDE", con_wait_for_altitude,
                                    transitions={
-                                        'wait_for_altitude' : "WAIT_FOR_ALTITUDE",
+                                        #'wait_for_autonomous_mode' : "WAIT_FOR_ALTITUDE",
+                                        #'wait_for_altitude' : "WAIT_FOR_ALTITUDE",
                                         'ready_to_nav' : "LAND"
                                     })
         
