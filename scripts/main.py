@@ -29,18 +29,9 @@ if __name__ == "__main__":
                                         })
             
             with con_wait_for_altitude:
-                smach.Concurrence.add('TAKEOFF', TakeOff(altitude),
-                                      transitions={
-                                        'wait_for_autonomous_mode':'TAKEOFF',
-                                        'wait_for_altitude' : 'TAKEOFF'
-                                    })
-                
-                smach.Concurrence.add('READ_ALTITUDE', RangeFinderCheck(altitude),
-                                      transitions={
-                                        'wait_for_altitude' : 'READ_ALTITUDE'
-                                    })
+                smach.Concurrence.add('TAKEOFF', TakeOff(altitude))
+                smach.Concurrence.add('READ_ALTITUDE', RangeFinderCheck(altitude))
             
-
             smach.StateMachine.add("WAIT_FOR_ALTITUDE", con_wait_for_altitude,
                                    transitions={
                                         'wait_for_altitude' : "WAIT_FOR_ALTITUDE",
