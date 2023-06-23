@@ -17,7 +17,7 @@ class Armed(smach.State):
     def _state_callback(self, msg):
         self.__armed = msg.armed
 
-    def execute(self, userdata):
+    def execute(self, status):
         if self.__armed:
             return 'armed'
         
@@ -65,8 +65,8 @@ class TakeOff(smach.State):
     def _state_callback(self, msg):
         self.__mode = msg.mode
 
-    def execute(self, userdata):
-        if userdata.ready:
+    def execute(self, status):
+        if status.ready:
             return 'take_off'
         
         if self.__init:
@@ -92,12 +92,12 @@ class RangeFinderCheck(smach.State):
     def _range_finder_callback(self, msg):
         self.__altitude = msg.range
 
-    def execute(self, userdata):
+    def execute(self, status):
         if (self.__goal_altitude - self.__altitude) <= 0.1:
-            userdata.ready = True
+            status.ready = True
             return 'ready'
         else:
-            userdata.ready = False
+            status.ready = False
             return 'wait_for_altitude'
 
 class Land(smach.State):
@@ -105,7 +105,7 @@ class Land(smach.State):
         smach.State.__init__(self, outcomes = ['land'])
         self.__base_controller = BaseController()   
 
-    def execute(self, userdata):
+    def execute(self, status):
         self.__base_controller.land()
         return 'land'
 
