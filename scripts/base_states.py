@@ -2,6 +2,9 @@ import rospy
 import smach
 from mission_planner.base_controller import BaseController
 
+from mavros_msgs.msg import State
+from sensor_msgs.msg import Range
+from geometry_msgs.msg import PoseStamped
 
 class Armed(smach.State):
     def __init__(self):
