@@ -70,7 +70,7 @@ class TakeOff(smach.State):
             if userdata.ready:
                 return 'take_off'
             
-        except InvalidStateError as e:
+        except:
             pass
         
         if self.__init:
