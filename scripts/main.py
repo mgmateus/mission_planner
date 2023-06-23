@@ -58,5 +58,5 @@ if __name__ == "__main__":
         
     
     # Execute SMACH plan
-    outcome = mission.execute()
+    outcome = sm_mission.execute()
 

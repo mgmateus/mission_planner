@@ -6,9 +6,9 @@ windows:
   - zed_mavros: 
       layout: tiled
       panes:
-        - roslaunch mission_planner_pkg include.launch
+        - roslaunch mission_planner include.launch
         
   - navigation: 
       layout: tiled
       panes:
-        - sleep 20; roslaunch mission_planner_pkg start.launch 
+        - sleep 20; rosrun mission_planner main.py 
