@@ -1,6 +1,6 @@
 import rospy
 import smach
-from flight_pkg.base_controller import BaseController
+from mission_planner.base_controller import BaseController
 
 
 class Armed(smach.State):
