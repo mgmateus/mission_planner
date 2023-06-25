@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """This is an example of how to do mission planning using BaseController. Do not run this module!"""
 import rospy
-from scripts.states import *
+from states import *
 
 if __name__ == "__main__":
     rospy.init_node("mission_plane_0_node")
