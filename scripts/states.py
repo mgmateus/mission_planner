@@ -38,7 +38,7 @@ class PositionCheck(smach.State, BaseController):
             return 'ready'
         else:
             userdata.ready = False
-            return 'wait_for_height'
+            return 'wait_for_position'
         
 class YawCheck(smach.State, BaseController):
     def __init__(self, target_yaw= None, threshold= 0.1):
@@ -115,7 +115,7 @@ class Navigate(smach.State, BaseController):
                 return 'sailed'
         except:
             pass
-        
+
         if self.__is_runing:
             return 'wait_for_position'
         
