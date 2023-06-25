@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     with sm_mission:
         altitude = 0.5
-        position = [[1.0, 0.0, altitude], [1.0, 0.5, altitude]]
+        position = [[1.2, 0.0, altitude], [0.0, 0.0, altitude]]
 
         sm_its_flying = smach.StateMachine(outcomes=["succeeded"])
         
