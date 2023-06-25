@@ -9,7 +9,7 @@ from geometry_msgs.msg import PoseStamped
 class RangeFinderCheck(smach.State, BaseController):
     def __init__(self, target_height= None, threshold= None):
         smach.State.__init__(self, outcomes = ['wait_for_altitude', 'ready'], input_keys = ['height'], output_keys = ['ready'])
-        BaseController.__init__()
+        BaseController.__init__(self)()
 
         self.__target_height = target_height  
         self.__threshold = threshold
@@ -26,7 +26,7 @@ class RangeFinderCheck(smach.State, BaseController):
 class PositionCheck(smach.State, BaseController):
     def __init__(self, target_position= None, threshold= 0.1):
         smach.State.__init__(self, outcomes = ['wait_for_position', 'ready'], input_keys = ['position'], output_keys = ['ready'])
-        BaseController.__init__()
+        BaseController.__init__(self)()
 
         self.__target_position = target_position 
         self.__threshold = threshold
@@ -43,7 +43,7 @@ class PositionCheck(smach.State, BaseController):
 class YawCheck(smach.State, BaseController):
     def __init__(self, target_yaw= None, threshold= 0.1):
         smach.State.__init__(self, outcomes = ['wait_for_yaw', 'ready'], input_keys = ['yaw'], output_keys = ['ready'])
-        BaseController.__init__()
+        BaseController.__init__(self)()
 
         self.__target_yaw = target_yaw 
         self.__threshold = threshold
@@ -60,7 +60,7 @@ class YawCheck(smach.State, BaseController):
 class Armed(smach.State, BaseController):
     def __init__(self):
         smach.State.__init__(self, outcomes = ['wait_for_arming', 'armed'])
-        BaseController.__init__()
+        BaseController.__init__(self)()
 
     def execute(self, userdata):
         if self.is_armed():
@@ -71,7 +71,7 @@ class Armed(smach.State, BaseController):
 class TakeOff(smach.State, BaseController):
     def __init__(self, target_height):
         smach.State.__init__(self, outcomes = ['wait_for_autonomous_mode', 'wait_for_altitude', 'take_off'], input_keys = ['ready'])
-        BaseController.__init__()
+        BaseController.__init__(self)()
 
         self.__target_height = target_height
         self.__is_runing = False 
@@ -93,7 +93,7 @@ class TakeOff(smach.State, BaseController):
 class Land(smach.State, BaseController):
     def __init__(self):
         smach.State.__init__(self, outcomes = ['land'])
-        BaseController.__init__()
+        BaseController.__init__(self)()
 
     def execute(self, userdata):
         self.land()
@@ -102,7 +102,7 @@ class Land(smach.State, BaseController):
 class Navigate(smach.State, BaseController):
     def __init__(self, position= None):
         smach.State.__init__(self, outcomes = ['sailed', 'wait_for_position'], input_keys = ['position', 'ready'])
-        BaseController.__init__()
+        BaseController.__init__(self)()
 
         self.__position = position
         self.__is_runing = False
@@ -124,7 +124,7 @@ class Navigate(smach.State, BaseController):
 class Spin(smach.State, BaseController):
     def __init__(self, yaw= None):
         smach.State.__init__(self, outcomes = ['turned', 'wait_for_yaw'], input_keys = ['yaw', 'ready'])
-        BaseController.__init__()
+        BaseController.__init__(self)
 
         self.__yaw = yaw
         self.__is_runing = False
