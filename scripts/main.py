@@ -59,7 +59,7 @@ if __name__ == "__main__":
                 smach.Concurrence.add('NAVIGATION_1', Navigate(position[0]))
 
             
-            smach.StateMachine.add("WAIT_FOR_POSITION_1", con_wait_for_position,
+            smach.StateMachine.add("WAIT_FOR_POSITION_1", con_wait_for_position_1,
                                    transitions={
                                         'wait_for_position_1' : "WAIT_FOR_POSITION_1",
                                         'ready_to_land' : "WAIT_FOR_POSITION_2"
