@@ -108,9 +108,13 @@ class Navigate(smach.State, BaseController):
         self.__is_runing = False
         
     def execute(self, userdata):
-        if userdata.ready:
-            self.__is_runing = False
-            return 'sailed'
+        try:
+
+            if userdata.ready:
+                self.__is_runing = False
+                return 'sailed'
+        except:
+            pass
         
         if self.__is_runing:
             return 'wait_for_position'
