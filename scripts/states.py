@@ -7,7 +7,7 @@ from sensor_msgs.msg import Range
 from geometry_msgs.msg import PoseStamped
 
 class RangeFinderCheck(smach.State, BaseController):
-    def __init__(self, target_height= None, threshold= 0.1):
+    def __init__(self, target_height= None, threshold= 0.15):
         smach.State.__init__(self, outcomes = ['wait_for_height', 'ready'], input_keys = ['height'], output_keys = ['ready'])
         BaseController.__init__(self)
 
@@ -24,7 +24,7 @@ class RangeFinderCheck(smach.State, BaseController):
             return 'wait_for_height'
         
 class PositionCheck(smach.State, BaseController):
-    def __init__(self, target_position= None, threshold= 0.1):
+    def __init__(self, target_position= None, threshold= 0.15):
         smach.State.__init__(self, outcomes = ['wait_for_position', 'ready'], input_keys = ['position'], output_keys = ['ready'])
         BaseController.__init__(self)
 
@@ -41,7 +41,7 @@ class PositionCheck(smach.State, BaseController):
             return 'wait_for_position'
         
 class YawCheck(smach.State, BaseController):
-    def __init__(self, target_yaw= None, threshold= 0.1):
+    def __init__(self, target_yaw= None, threshold= 5.0):
         smach.State.__init__(self, outcomes = ['wait_for_yaw', 'ready'], input_keys = ['yaw'], output_keys = ['ready'])
         BaseController.__init__(self)
 
