@@ -23,8 +23,8 @@ if __name__ == "__main__":
                                     })
             
             with con_wait_for_altitude:
-                smach.Concurrence.add('TAKEOFF', TakeOff(altitude))
                 smach.Concurrence.add('READ_ALTITUDE', RangeFinderCheck(altitude))
+                smach.Concurrence.add('TAKEOFF', TakeOff(altitude))
 
             
             #######################################
