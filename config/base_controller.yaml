@@ -4,7 +4,17 @@ services:
   takeoff: "/mavros/cmd/takeoff"
   setmode: "/mavros/set_mode"
   land: "/mavros/cmd/land"
-  set_stream_rate: "/mavros/set_stream_rate"
+  stream_rate: "/mavros/set_stream_rate"
+
+publishers:
+
+  setpoint_position_local: "/mavros/setpoint_position/local"
+
+subscribers:
+
+  state: "/mavros/state"
+  rangefinder: "/mavros/rangefinder/rangefinder"
+  local_position_pose: "/mavros/local_position/pose"
 
 custom_modes:
   - "STABILIZE"
