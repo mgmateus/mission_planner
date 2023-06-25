@@ -43,13 +43,13 @@ if __name__ == "__main__":
             smach.StateMachine.add("ARMED", Armed(),
                                    transitions={
                                        "wait_for_arming":"ARMED",
-                                        "armed" : "WAIT_FOR_ALTITUDE"
+                                        "armed" : "WAIT_FOR_HEIGHT"
                                     })
             
             
-            smach.StateMachine.add("WAIT_FOR_ALTITUDE", con_wait_for_height,
+            smach.StateMachine.add("WAIT_FOR_HEIGHT", con_wait_for_height,
                                    transitions={
-                                        'wait_for_altitude' : "WAIT_FOR_ALTITUDE",
+                                        'wait_for_height' : "WAIT_FOR_HEIGHT",
                                         'ready_to_nav' : "WAIT_FOR_POSITION"
                                     })
             
