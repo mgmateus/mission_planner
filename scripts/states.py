@@ -8,7 +8,7 @@ from geometry_msgs.msg import PoseStamped
 
 class RangeFinderCheck(smach.State, BaseController):
     def __init__(self, target_height= None, threshold= 0.1):
-        smach.State.__init__(self, outcomes = ['wait_for_altitude', 'ready'], input_keys = ['height'], output_keys = ['ready'])
+        smach.State.__init__(self, outcomes = ['wait_for_height', 'ready'], input_keys = ['height'], output_keys = ['ready'])
         BaseController.__init__(self)
 
         self.__target_height = target_height  
@@ -21,7 +21,7 @@ class RangeFinderCheck(smach.State, BaseController):
             return 'ready'
         else:
             userdata.ready = False
-            return 'wait_for_altitude'
+            return 'wait_for_height'
         
 class PositionCheck(smach.State, BaseController):
     def __init__(self, target_position= None, threshold= 0.1):
@@ -38,7 +38,7 @@ class PositionCheck(smach.State, BaseController):
             return 'ready'
         else:
             userdata.ready = False
-            return 'wait_for_altitude'
+            return 'wait_for_height'
         
 class YawCheck(smach.State, BaseController):
     def __init__(self, target_yaw= None, threshold= 0.1):
@@ -55,7 +55,7 @@ class YawCheck(smach.State, BaseController):
             return 'ready'
         else:
             userdata.ready = False
-            return 'wait_for_altitude'
+            return 'wait_for_height'
         
 class Armed(smach.State, BaseController):
     def __init__(self):
@@ -70,7 +70,7 @@ class Armed(smach.State, BaseController):
 
 class TakeOff(smach.State, BaseController):
     def __init__(self, target_height):
-        smach.State.__init__(self, outcomes = ['wait_for_autonomous_mode', 'wait_for_altitude', 'take_off'], input_keys = ['ready'])
+        smach.State.__init__(self, outcomes = ['wait_for_autonomous_mode', 'wait_for_height', 'take_off'], input_keys = ['ready'])
         BaseController.__init__(self)
 
         self.__target_height = target_height
@@ -81,12 +81,12 @@ class TakeOff(smach.State, BaseController):
             return 'take_off'
         
         if self.__is_runing:
-            return 'wait_for_altitude'
+            return 'wait_for_height'
         
         if self.get_mode() != 'STABILIZE':
             self.takeoff(altitude=self.__target_height)
             self.__is_runing = True
-            return 'wait_for_altitude'
+            return 'wait_for_height'
             
         return 'wait_for_autonomous_mode'
 
