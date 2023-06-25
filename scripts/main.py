@@ -25,12 +25,17 @@ if __name__ == "__main__":
             
             
 
-            con_wait_for_position = smach.Concurrence(outcomes=['wait_for_position','ready_to_land'],
-                                    default_outcome = 'wait_for_position',
+            con_wait_for_position_1 = smach.Concurrence(outcomes=['wait_for_position_1','ready_to_land'],
+                                    default_outcome = 'wait_for_position_1',
                                     outcome_map={
-                                        'ready_to_land': {'NAVIGATION':'sailed','READ_POSITION':'ready'}
+                                        'ready_to_land': {'NAVIGATION_1':'sailed','READ_POSITION_1':'ready'}
                                     })
             
+            con_wait_for_position_2 = smach.Concurrence(outcomes=['wait_for_position_2','ready_to_land'],
+                                    default_outcome = 'wait_for_position_2',
+                                    outcome_map={
+                                        'ready_to_land': {'NAVIGATION_2':'sailed','READ_POSITION_2':'ready'}
+                                    })
             
             #######################################
             smach.StateMachine.add("ARMED", Armed(),
@@ -49,25 +54,25 @@ if __name__ == "__main__":
                                         'ready_to_nav' : "WAIT_FOR_POSITION_1"
                                     })
             
-            with con_wait_for_position:
-                smach.Concurrence.add('READ_POSITION', PositionCheck(target_position=position[0]))
-                smach.Concurrence.add('NAVIGATION', Navigate(position[0]))
+            with con_wait_for_position_1:
+                smach.Concurrence.add('READ_POSITION_1', PositionCheck(target_position=position[0]))
+                smach.Concurrence.add('NAVIGATION_1', Navigate(position[0]))
 
             
             smach.StateMachine.add("WAIT_FOR_POSITION_1", con_wait_for_position,
                                    transitions={
-                                        'wait_for_position' : "WAIT_FOR_POSITION_1",
+                                        'wait_for_position_1' : "WAIT_FOR_POSITION_1",
                                         'ready_to_land' : "WAIT_FOR_POSITION_2"
                                     })
             
-            with con_wait_for_position:
-                smach.Concurrence.add('READ_POSITION', PositionCheck(target_position=position[1]))
-                smach.Concurrence.add('NAVIGATION', Navigate(position[1]))
+            with con_wait_for_position_2:
+                smach.Concurrence.add('READ_POSITION_2', PositionCheck(target_position=position[1]))
+                smach.Concurrence.add('NAVIGATION_2', Navigate(position[1]))
 
             
-            smach.StateMachine.add("WAIT_FOR_POSITION_2", con_wait_for_position,
+            smach.StateMachine.add("WAIT_FOR_POSITION_2", con_wait_for_position_2,
                                    transitions={
-                                        'wait_for_position' : "WAIT_FOR_POSITION_2",
+                                        'wait_for_position_2' : "WAIT_FOR_POSITION_2",
                                         'ready_to_land' : "LAND"
                                     })
         
