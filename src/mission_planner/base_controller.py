@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 import time
 import rospy
-import smach
 
-from std_msgs.msg import String
+import numpy as np
+ 
 from mavros_msgs.srv import (
     CommandBool,
     CommandTOL,
     SetMode,
     StreamRate
 )
+from mavros_msgs.msg import State
+from sensor_msgs.msg import Range
+from geometry_msgs.msg import PoseStamped
 
 class BaseController():
     """BaseController is used to call the services from mavlink using mavros.
@@ -17,48 +20,78 @@ class BaseController():
     Keywords arguments:
     services_timeout -- the max time to check if the services are running (default=60 seconds).
     """
-
+    
     def __init__(self, services_timeout: float = 60) -> None:
-        self.__service_arming = None
-        self.__service_takeoff = None
-        self.__service_setmode = None
-        self.__service_land = None
-        self.__service_streamrate = None
-
-        self.__service_arming_proxy = None
-        self.__service_takeoff_proxy = None
-        self.__service_setmode_proxy = None
-        self.__service_land_proxy = None
-        self.__service_streamrate_proxy = None
-
-        self.__custom_modes = None
-        self.__pub_info = rospy.Publisher('base_controller_info', String, queue_size=1)
+        self.state = None
+        self.rangefinder = None
+        self.current_position = None
 
         self.__read_parameters()
         self.__init_services()
+        self.__init_publishers()
+        self.__init_subscribers()
 
         self.__check_for_services(services_timeout)
-        self.__service_streamrate_proxy(stream_id=0, message_rate=10, on_off=True)
+        assert self.__enable_mavros_topics()
 
     def __read_parameters(self) -> None:
-        """Read the services names from base_controller config file."""
+        """Read the services names from base_controller config file"""
+
+        # Services
         self.__service_arming = rospy.get_param("services/arming")
         self.__service_takeoff = rospy.get_param("services/takeoff")
         self.__service_setmode = rospy.get_param("services/setmode")
         self.__service_land = rospy.get_param("services/land")
-        self.__service_streamrate = rospy.get_param("services/set_stream_rate")
+        self.__service_streamrate = rospy.get_param("services/stream_rate")
+
+        # Publishers
+        self.__setpoint_local = rospy.get_param("publishers/setpoint_position_local")
+
+        # Subscribers
+        self.__state = rospy.get_param("subscribers/state")
+        self.__rangefinder = rospy.get_param("subscribers/rangefinder")
+        self.__local_position_pose = rospy.get_param("subscribers/local_position_pose")
+
+        # Common
         self.__custom_modes = rospy.get_param("custom_modes")
 
     def __init_services(self) -> None:
-        """Start the ros service proxy for each service."""
+        """Start the ros service proxy for each service"""
         self.__service_arming_proxy = rospy.ServiceProxy(self.__service_arming, CommandBool)
         self.__service_takeoff_proxy = rospy.ServiceProxy(self.__service_takeoff, CommandTOL)
         self.__service_setmode_proxy = rospy.ServiceProxy(self.__service_setmode, SetMode)
-        self.__service_land_proxy = rospy.ServiceProxy(self.__service_land, CommandTOL) 
+        self.__service_land_proxy = rospy.ServiceProxy(self.__service_land, CommandTOL)
         self.__service_streamrate_proxy = rospy.ServiceProxy(self.__service_streamrate, StreamRate)
 
+    def __init_publishers(self) -> None:
+        """Start the publishers"""
+        self.__publisher_setpoint_local = rospy.Publisher(self.__setpoint_local, \
+                                                          PoseStamped, \
+                                                          queue_size=1)
+
+    def __init_subscribers(self) -> None:
+        """Start the subscribers"""
+        rospy.Subscriber(self.__state, State, \
+                         self.__state_callback)
+        rospy.Subscriber(self.__rangefinder, Range, \
+                         self.__rangefinder_callback)
+        rospy.Subscriber(self.__local_position_pose, PoseStamped, \
+                         self.__local_position_pose_callback)
+
+    def __state_callback(self, msg: State) -> None:
+        """The callback method to verify the flight state"""
+        self.state = msg
+
+    def __rangefinder_callback(self, msg: Range) -> None:
+        """The callback to get the rangefinder range"""
+        self.rangefinder = msg
+
+    def __local_position_pose_callback(self, msg: PoseStamped) -> None:
+        """The callback to verify the drone position"""
+        self.current_position = msg
+
     def __check_for_services(self, services_timeout: float) -> None:
-        """Check if all the services are running."""
+        """Check if all the services are running"""
         try:
             rospy.wait_for_service(self.__service_arming, timeout=services_timeout)
             rospy.wait_for_service(self.__service_takeoff, timeout=services_timeout)
@@ -67,6 +100,14 @@ class BaseController():
             rospy.wait_for_service(self.__service_streamrate, timeout=services_timeout)
         except rospy.ROSException as ros_exception:
             raise rospy.ROSException from ros_exception
+
+    def __enable_mavros_topics(self) -> bool:
+        """Enable the topics of mavros"""
+        try:
+            self.__service_streamrate_proxy(stream_id=0, message_rate=10, on_off=True)
+            return True
+        except rospy.ServiceException as service_exception:
+            raise rospy.ServiceException from service_exception
 
     def arm(self) -> bool:
         """This method call the arming service to arm the drone 
@@ -141,9 +182,9 @@ class BaseController():
         Keywords arguments:
         min_pitch   -- The minimum allowed pitch angle during takeoff (default set as 0).
         yaw         -- The desired direction angle during takeoff (usually set as 0 to maintain the current direction).
-        latitude    -- the latitude of the desired takeoff position (usually set as 0 to use the current position).
-        longitude   -- the longitude of the desired takeoff position (usually set as 0 to use the current position).
-        altitude    -- the desired altitude for UAV takeoff (default set as 0).
+        latitude    -- The latitude of the desired takeoff position (usually set as 0 to use the current position).
+        longitude   -- The longitude of the desired takeoff position (usually set as 0 to use the current position).
+        altitude    -- The desired altitude for UAV takeoff (default set as 0).
 
         Returns:
         response.success -- returns true if the service worked correctly.
@@ -154,5 +195,129 @@ class BaseController():
         except rospy.ServiceException as service_exception:
             raise rospy.ServiceException from service_exception
 
+    def set_position(self, position_x: float = 0.0, position_y: float = 0.0, \
+                     position_z: float = 0.0) -> bool:
+        """This method publish a PoseStamped message in setpoint_position/local
+        
+        Keywords arguments:
+        position_x  -- The target position in x
+        position_y  -- The target position in y
+        position_z  -- The target position in z
 
-                    
+        Returns:
+        True
+        """
+        try:
+            self.set_custom_mode("GUIDED")
+
+            pose = PoseStamped()
+            pose.pose.position.x = position_x
+            pose.pose.position.y = position_y
+            pose.pose.position.z = position_z
+
+            self.__publisher_setpoint_local.publish(pose)
+
+            return True
+        except rospy.ROSException as ros_exception:
+            raise rospy.ROSException from ros_exception
+        
+    def set_yaw(self, yaw: float = 0.0) -> bool:
+        """This method publish a PoseStamped message in setpoint_position/local
+        
+        Keywords arguments:
+        yaw  -- The target orientation in z
+
+        Returns:
+        True
+        """
+        try:
+            self.set_custom_mode("GUIDED")
+
+            pose = PoseStamped()
+            pose.pose.orientation.z = np.radians(yaw)
+
+            self.__publisher_setpoint_local.publish(pose)
+
+            return True
+        except rospy.ROSException as ros_exception:
+            raise rospy.ROSException from ros_exception
+        
+
+    def get_current_position(self) -> list:
+        """Get current position of the drone
+        
+        Returns:
+        current_position    -- The current position of the drone
+        """
+        p_x = self.current_position.pose.position.x
+        p_y = self.current_position.pose.position.y
+        p_z = self.current_position.pose.position.z
+        return [p_x, p_y, p_z]
+    
+    def get_current_yaw(self) -> float:
+        """Get current yaw of the drone
+        
+        Returns:
+        current_yaw    -- The current yaw of the drone in degrees
+        """
+        current_yaw = np.degrees(self.current_position.pose.orientation.z)
+        return current_yaw
+
+
+    def get_height(self) -> float:
+        """Get the current height of the drone
+        
+        Returns:
+        current_height      -- The current height of the drone
+        """
+        current_height = self.rangefinder.range
+        return current_height
+    
+    def get_mode(self) -> str:
+        """Get the current flight mode of the drone
+        
+        Returns:
+        mode      -- The current flight mode of the drone
+        """
+        mode = self.state.mode
+        return mode
+    
+    def is_armed(self) -> bool:
+        """Get the current armed status
+        
+        Returns:
+        status      -- The current armed status of the drone
+        """
+        status = self.state.armed
+        return status
+    
+    def is_target_height(self, target_height: float = 0.0, threshold: float = 0.0) -> bool:
+        """Get the evatuation of the drone difference to target heigth with a threashold
+        
+        Returns:
+        eval    -- The evatuation of the drone difference to target heigth
+        """
+        eval = True if (target_height - self.get_height()) <= threshold else False
+        return eval
+    
+    def is_target_position(self, target_position: list = [0.0, 0.0, 0.0], threshold: float = 0.0) -> bool:
+        """Get the evatuation of the drone difference to target position with a threashold
+        
+        Returns:
+        eval    -- The evatuation of the drone difference to target position
+        """
+        target_position = np.array(target_position)
+        current_position = np.array(self.get_current_position())
+        eval = True if np.linalg.norm(target_position - current_position) <= threshold else False
+        return eval
+    
+    def is_target_yaw(self, target_yaw: float = 0.0, threshold: float = 0.0) -> bool:
+        """Get the evatuation of the drone difference to target yaw with a threashold
+        
+        Returns:
+        eval    -- The evatuation of the drone difference to target yaw 
+        """
+        target_yaw = np.array(target_yaw)
+        current_yaw = np.array(self.get_current_yaw())
+        eval = True if np.linalg.norm(target_yaw - current_yaw) <= threshold else False
+        return eval
