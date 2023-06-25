@@ -289,6 +289,7 @@ class BaseController():
         status      -- The current armed status of the drone
         """
         status = self.state.armed
+        rospy.logwarn(f"----> {status}")
         return status
     
     def is_target_height(self, target_height: float = 0.0, threshold: float = 0.0) -> bool:
