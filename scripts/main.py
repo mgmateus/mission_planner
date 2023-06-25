@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     with sm_mission:
         altitude = 0.5
-        position = [[1.2, 0.0, altitude], [0.0, 0.0, altitude]]
+        position = [[1.2, 0.0, altitude], [1.2, 0.0, 1.5], [0.0, 0.0, 1.5]]
 
         sm_its_flying = smach.StateMachine(outcomes=["succeeded"])
         
@@ -35,6 +35,12 @@ if __name__ == "__main__":
                                     default_outcome = 'wait_for_position_2',
                                     outcome_map={
                                         'ready_to_land': {'NAVIGATION_2':'sailed','READ_POSITION_2':'ready'}
+                                    })
+            
+            con_wait_for_position_3 = smach.Concurrence(outcomes=['wait_for_position_3','ready_to_land'],
+                                    default_outcome = 'wait_for_position_3',
+                                    outcome_map={
+                                        'ready_to_land': {'NAVIGATION_3':'sailed','READ_POSITION_3':'ready'}
                                     })
             
             #######################################
@@ -73,6 +79,17 @@ if __name__ == "__main__":
             smach.StateMachine.add("WAIT_FOR_POSITION_2", con_wait_for_position_2,
                                    transitions={
                                         'wait_for_position_2' : "WAIT_FOR_POSITION_2",
+                                        'ready_to_land' : "WAIT_FOR_POSITION_3"
+                                    })
+            
+            with con_wait_for_position_3:
+                smach.Concurrence.add('READ_POSITION_3', PositionCheck(target_position=position[2]))
+                smach.Concurrence.add('NAVIGATION_3', Navigate(position[2]))
+
+            
+            smach.StateMachine.add("WAIT_FOR_POSITION_3", con_wait_for_position_3,
+                                   transitions={
+                                        'wait_for_position_3' : "WAIT_FOR_POSITION_3",
                                         'ready_to_land' : "LAND"
                                     })
         
