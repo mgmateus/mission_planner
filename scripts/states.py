@@ -7,7 +7,7 @@ from sensor_msgs.msg import Range
 from geometry_msgs.msg import PoseStamped
 
 class RangeFinderCheck(smach.State, BaseController):
-    def __init__(self, target_height= None, threshold= None):
+    def __init__(self, target_height= None, threshold= 0.1):
         smach.State.__init__(self, outcomes = ['wait_for_altitude', 'ready'], input_keys = ['height'], output_keys = ['ready'])
         BaseController.__init__(self)
 
