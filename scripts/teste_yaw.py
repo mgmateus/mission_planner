@@ -12,7 +12,7 @@ if __name__ == "__main__":
     with sm_mission:
         altitude = 0.5
         position = [[1.2, 0.0, altitude], [1.2, 0.0, 1.5], [0.0, 0.0, 1.5]]
-        yaw = [180]
+        yaw = [90, 90]
 
         sm_its_flying = smach.StateMachine(outcomes=["succeeded"])
         
@@ -27,7 +27,13 @@ if __name__ == "__main__":
             con_wait_for_yaw_1 = smach.Concurrence(outcomes=['wait_for_yaw_1','ready_to_nav_1'],
                                     default_outcome = 'wait_for_yaw_1',
                                     outcome_map={
-                                        'ready_to_nav_1': {'YAW_1':'turned','READ_YAW_1':'ready_yaw'}
+                                        'ready_to_nav_1': {'YAW_1':'turned','READ_YAW_1':'ready'}
+                                    })
+            
+            con_wait_for_yaw_2 = smach.Concurrence(outcomes=['wait_for_yaw_1','ready_to_nav_2'],
+                                    default_outcome = 'wait_for_yaw_2',
+                                    outcome_map={
+                                        'ready_to_nav_2': {'YAW_2':'turned','READ_YAW_2':'ready'}
                                     })
             
             smach.StateMachine.add("ARMED", Armed(),
@@ -54,7 +60,18 @@ if __name__ == "__main__":
             smach.StateMachine.add("WAIT_FOR_YAW_1", con_wait_for_yaw_1,
                                    transitions={
                                         'wait_for_yaw_1' : "WAIT_FOR_YAW_1",
-                                        'ready_to_nav_1' : "LAND"
+                                        'ready_to_nav_1' : "WAIT_FOR_YAW_2"
+                                    })
+            
+            with con_wait_for_yaw_2:
+                smach.Concurrence.add('READ_YAW_2', YawCheck(target_yaw=yaw[1]))
+                smach.Concurrence.add('YAW_2', Yaw(yaw[1]))
+
+            
+            smach.StateMachine.add("WAIT_FOR_YAW_2", con_wait_for_yaw_1,
+                                   transitions={
+                                        'wait_for_yaw_2' : "WAIT_FOR_YAW_2",
+                                        'ready_to_nav_2' : "LAND"
                                     })
             
             smach.StateMachine.add("LAND", Land(),
