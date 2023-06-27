@@ -51,11 +51,12 @@ class YawCheck(smach.State, BaseController):
     def execute(self, userdata):
         yaw = self.__target_yaw or userdata.yaw
         if self.is_target_yaw(yaw, self.__threshold):
+            
             userdata.ready = True
             return 'ready'
         else:
             userdata.ready = False
-            return 'wait_for_height'
+            return 'wait_for_yaw'
         
 class Armed(smach.State, BaseController):
     def __init__(self):
