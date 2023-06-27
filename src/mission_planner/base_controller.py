@@ -253,7 +253,7 @@ class BaseController():
         try:
             self.set_custom_mode("GUIDED")
 
-            p_x, p_y, p_z = self.__yaw_position.pose.position.x, self.__yaw_position.pose.position.y, self.__yaw_position.pose.position.z
+            p_x, p_y, p_z = self.__yaw_position
             x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(yaw))
 
             pose = PoseStamped()
