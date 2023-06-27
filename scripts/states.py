@@ -140,7 +140,7 @@ class Yaw(smach.State, BaseController):
             if userdata.ready:
                 self.__is_runing = False
                 userdata.ready = False
-                return 'sailed'
+                return 'turned'
         except:
             pass
         
