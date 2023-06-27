@@ -27,13 +27,13 @@ if __name__ == "__main__":
             con_wait_for_yaw_1 = smach.Concurrence(outcomes=['wait_for_yaw_1','ready_to_nav_1'],
                                     default_outcome = 'wait_for_yaw_1',
                                     outcome_map={
-                                        'ready_to_nav_1': {'YAW_1':'turned','READ_YAW_1':'ready'}
+                                        'ready_to_nav_1': {'YAW_1':'turned'}
                                     })
             
             con_wait_for_yaw_2 = smach.Concurrence(outcomes=['wait_for_yaw_2','ready_to_nav_2'],
                                     default_outcome = 'wait_for_yaw_2',
                                     outcome_map={
-                                        'ready_to_nav_2': {'YAW_2':'turned','READ_YAW_2':'ready'}
+                                        'ready_to_nav_2': {'YAW_2':'turned'}
                                     })
             
             smach.StateMachine.add("ARMED", Armed(),
