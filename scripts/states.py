@@ -152,6 +152,7 @@ class Yaw(smach.State, BaseController):
         
         yaw = self.__yaw or userdata.yaw
         
+        self.save_position_to_yaw()
         self.set_yaw(yaw)
         self.__is_runing = True
         return 'wait_for_yaw'

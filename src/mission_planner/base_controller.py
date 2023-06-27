@@ -253,7 +253,7 @@ class BaseController():
         try:
             self.set_custom_mode("GUIDED")
 
-            p_x, p_y, p_z = self.current_position.pose.position.x, self.current_position.pose.position.y, self.current_position.pose.position.z
+            p_x, p_y, p_z = self.__yaw_position.pose.position.x, self.__yaw_position.pose.position.y, self.__yaw_position.pose.position.z
             x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(yaw))
 
             pose = PoseStamped()
@@ -267,10 +267,18 @@ class BaseController():
 
             self.__publisher_setpoint_local.publish(pose)
 
-            return True
+            return self.__yaw_position
         except rospy.ROSException as ros_exception:
             raise rospy.ROSException from ros_exception
         
+    def save_position_to_yaw(self) -> bool:
+        """Save current position of the drone
+        
+        Returns:
+        __yaw_position    -- The current position of the drone
+        """
+        self.__yaw_position = self.get_current_position(self)
+        return True
 
     def get_current_position(self) -> list:
         """Get current position of the drone
