@@ -56,7 +56,7 @@ class YawCheck(smach.State, BaseController):
             rospy.logwarn(f"current: {self.get_current_yaw()}")
             return 'ready'
         else:
-            userdata.ready_yaw = False
+            userdata.ready = False
             rospy.logwarn(f"target: {yaw} ---- current: {self.get_current_yaw()}")
             return 'wait_for_yaw'
         
