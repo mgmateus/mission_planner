@@ -68,7 +68,7 @@ if __name__ == "__main__":
                 smach.Concurrence.add('YAW_2', Yaw(yaw[1]))
 
             
-            smach.StateMachine.add("WAIT_FOR_YAW_2", con_wait_for_yaw_1,
+            smach.StateMachine.add("WAIT_FOR_YAW_2", con_wait_for_yaw_2,
                                    transitions={
                                         'wait_for_yaw_2' : "WAIT_FOR_YAW_2",
                                         'ready_to_nav_2' : "LAND"
