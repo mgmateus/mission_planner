@@ -3,6 +3,7 @@ import time
 import rospy
 
 import numpy as np
+from tf.transformations import euler_from_quaternion
  
 from mavros_msgs.srv import (
     CommandBool,
@@ -20,6 +21,26 @@ class BaseController():
     Keywords arguments:
     services_timeout -- the max time to check if the services are running (default=60 seconds).
     """
+
+    @staticmethod
+    def quaternion_from_euler(roll, pitch, yaw):
+        """
+        Convert an Euler angle to a quaternion.
+
+        Input
+        :param roll: The roll (rotation around x-axis) angle in radians.
+        :param pitch: The pitch (rotation around y-axis) angle in radians.
+        :param yaw: The yaw (rotation around z-axis) angle in radians.
+
+        Output
+        :return qx, qy, qz, qw: The orientation in quaternion [x,y,z,w] format
+        """
+        qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+        qy = np.cos(roll/2) * np.sin(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.cos(pitch/2) * np.sin(yaw/2)
+        qz = np.cos(roll/2) * np.cos(pitch/2) * np.sin(yaw/2) - np.sin(roll/2) * np.sin(pitch/2) * np.cos(yaw/2)
+        qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
+
+        return [qx, qy, qz, qw]
     
     def __init__(self, services_timeout: float = 60) -> None:
         self.state = None
@@ -234,7 +255,7 @@ class BaseController():
             self.set_custom_mode("GUIDED")
 
             pose = PoseStamped()
-            pose.pose.orientation.z = np.radians(yaw)
+            pose.pose.orientation = self.quaternion_from_euler(0, 0, np.radians(yaw))
 
             self.__publisher_setpoint_local.publish(pose)
 
@@ -260,7 +281,8 @@ class BaseController():
         Returns:
         current_yaw    -- The current yaw of the drone in degrees
         """
-        current_yaw = np.degrees(self.current_position.pose.orientation.z)
+        x, y, z, w = self.current_position.pose.orientation
+        current_yaw = np.degrees(euler_from_quaternion([x, y, z, w]))[2]
         return current_yaw
 
 
@@ -317,7 +339,6 @@ class BaseController():
         Returns:
         eval    -- The evatuation of the drone difference to target yaw 
         """
-        target_yaw = np.array(target_yaw)
-        current_yaw = np.array(self.get_current_yaw())
-        eval = True if np.linalg.norm(target_yaw - current_yaw) <= threshold else False
+        current_yaw = self.get_current_yaw()
+        eval = True if target_yaw - current_yaw <= threshold else False
         return eval
