@@ -12,7 +12,7 @@ if __name__ == "__main__":
     with sm_mission:
         altitude = 0.5
         position = [[1.2, 0.0, altitude], [1.2, 0.0, 1.5], [0.0, 0.0, 1.5]]
-        yaw = [180]
+        yaw = [179]
 
         sm_its_flying = smach.StateMachine(outcomes=["succeeded"])
         
@@ -23,17 +23,18 @@ if __name__ == "__main__":
                                     outcome_map={
                                         'ready_to_nav': {'TAKEOFF':'take_off','READ_HEIGHT':'ready'}
                                     })
-            
+            """
             con_wait_for_position_1 = smach.Concurrence(outcomes=['wait_for_position_1','ready_to_yaw'],
                                     default_outcome = 'wait_for_position_1',
                                     outcome_map={
                                         'ready_to_yaw': {'NAVIGATION_1':'sailed','READ_POSITION_1':'ready'}
                                     })
+            """
             
             con_wait_for_yaw_1 = smach.Concurrence(outcomes=['wait_for_yaw_1','ready_to_nav_1'],
                                     default_outcome = 'wait_for_yaw_1',
                                     outcome_map={
-                                        'ready_to_nav_1': {'YAW_1':'turned','READ_YAW_1':'ready'}
+                                        'ready_to_nav_1': {'YAW_1':'turned','READ_YAW_1':'ready_yaw'}
                                     })
             
             """

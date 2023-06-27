@@ -42,7 +42,7 @@ class PositionCheck(smach.State, BaseController):
         
 class YawCheck(smach.State, BaseController):
     def __init__(self, target_yaw= None, threshold= 5.0):
-        smach.State.__init__(self, outcomes = ['wait_for_yaw', 'ready'], input_keys = ['yaw'], output_keys = ['ready'])
+        smach.State.__init__(self, outcomes = ['wait_for_yaw', 'ready_yaw'], input_keys = ['yaw'], output_keys = ['ready_yaw'])
         BaseController.__init__(self)
 
         self.__target_yaw = target_yaw 
@@ -53,10 +53,10 @@ class YawCheck(smach.State, BaseController):
         rospy.logwarn(f"target: {yaw} ---- current: {self.get_current_yaw()}")
         if self.is_target_yaw(yaw, self.__threshold):
             
-            userdata.ready = True
-            return 'ready'
+            userdata.ready_yaw = True
+            return 'ready_yaw'
         else:
-            userdata.ready = False
+            userdata.ready_yaw = False
             return 'wait_for_yaw'
         
 class Armed(smach.State, BaseController):
@@ -131,7 +131,7 @@ class Navigate(smach.State, BaseController):
     
 class Yaw(smach.State, BaseController):
     def __init__(self, yaw= None):
-        smach.State.__init__(self, outcomes = ['turned', 'wait_for_yaw'], input_keys = ['yaw', 'ready'])
+        smach.State.__init__(self, outcomes = ['turned', 'wait_for_yaw'], input_keys = ['yaw', 'ready_yaw'])
         BaseController.__init__(self)
 
         self.__yaw = yaw
@@ -139,9 +139,8 @@ class Yaw(smach.State, BaseController):
         
     def execute(self, userdata):
         try:
-            if userdata.ready:
+            if userdata.ready_yaw:
                 self.__is_runing = False
-                userdata.ready = False
                 return 'turned'
         except:
             pass
