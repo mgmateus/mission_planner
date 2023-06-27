@@ -277,7 +277,7 @@ class BaseController():
         Returns:
         __yaw_position    -- The current position of the drone
         """
-        self.__yaw_position = self.get_current_position(self)
+        self.__yaw_position = self.get_current_position()
         return True
 
     def get_current_position(self) -> list:
