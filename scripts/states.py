@@ -78,6 +78,7 @@ class TakeOff(smach.State, BaseController):
 
     def execute(self, userdata):
         if userdata.ready:
+            userdata.ready = False
             return 'take_off'
         
         if self.__is_runing:
@@ -112,6 +113,7 @@ class Navigate(smach.State, BaseController):
 
             if userdata.ready:
                 self.__is_runing = False
+                userdata.ready = False
                 return 'sailed'
         except:
             pass
@@ -135,9 +137,9 @@ class Yaw(smach.State, BaseController):
         
     def execute(self, userdata):
         try:
-
             if userdata.ready:
                 self.__is_runing = False
+                userdata.ready = False
                 return 'sailed'
         except:
             pass
