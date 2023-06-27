@@ -14,7 +14,6 @@ from mavros_msgs.srv import (
 from mavros_msgs.msg import State
 from sensor_msgs.msg import Range
 from geometry_msgs.msg import PoseStamped
-
 class BaseController():
     """BaseController is used to call the services from mavlink using mavros.
     
@@ -254,8 +253,13 @@ class BaseController():
         try:
             self.set_custom_mode("GUIDED")
 
+            x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(yaw))
+
             pose = PoseStamped()
-            pose.pose.orientation = self.quaternion_from_euler(0, 0, np.radians(yaw))
+            pose.pose.orientation.x = x
+            pose.pose.orientation.y = y
+            pose.pose.orientation.z = z
+            pose.pose.orientation.w = w
 
             self.__publisher_setpoint_local.publish(pose)
 
