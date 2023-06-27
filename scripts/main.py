@@ -69,9 +69,9 @@ if __name__ == "__main__":
             smach.StateMachine.add("WAIT_FOR_HEIGHT", con_wait_for_height,
                                    transitions={
                                         'wait_for_height' : "WAIT_FOR_HEIGHT",
-                                        'ready_to_nav' : "WAIT_FOR_POSITION_1"
+                                        'ready_to_nav' : "WAIT_FOR_YAW_1"
                                     })
-            
+            """
             with con_wait_for_position_1:
                 smach.Concurrence.add('READ_POSITION_1', PositionCheck(target_position=position[0]))
                 smach.Concurrence.add('NAVIGATION_1', Navigate(position[0]))
@@ -82,6 +82,8 @@ if __name__ == "__main__":
                                         'wait_for_position_1' : "WAIT_FOR_POSITION_1",
                                         'ready_to_yaw' : "WAIT_FOR_YAW_1"
                                     })
+            """
+            
             
             with con_wait_for_yaw_1:
                 smach.Concurrence.add('READ_YAW_1', YawCheck(target_yaw=yaw[0]))
