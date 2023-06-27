@@ -12,6 +12,7 @@ if __name__ == "__main__":
     with sm_mission:
         altitude = 0.5
         position = [[1.2, 0.0, altitude], [1.2, 0.0, 1.5], [0.0, 0.0, 1.5]]
+        yaw = [180]
 
         sm_its_flying = smach.StateMachine(outcomes=["succeeded"])
         
@@ -23,8 +24,19 @@ if __name__ == "__main__":
                                         'ready_to_nav': {'TAKEOFF':'take_off','READ_HEIGHT':'ready'}
                                     })
             
+            con_wait_for_position_1 = smach.Concurrence(outcomes=['wait_for_position_1','ready_to_yaw'],
+                                    default_outcome = 'wait_for_position_1',
+                                    outcome_map={
+                                        'ready_to_yaw': {'NAVIGATION_1':'sailed','READ_POSITION_1':'ready'}
+                                    })
             
-
+            con_wait_for_yaw_1 = smach.Concurrence(outcomes=['wait_for_yaw_1','ready_to_nav'],
+                                    default_outcome = 'wait_for_yaw_1',
+                                    outcome_map={
+                                        'ready_to_nav': {'YAW_1':'sailed','READ_YAW_1':'ready'}
+                                    })
+            
+            """
             con_wait_for_position_1 = smach.Concurrence(outcomes=['wait_for_position_1','ready_to_land'],
                                     default_outcome = 'wait_for_position_1',
                                     outcome_map={
@@ -42,7 +54,7 @@ if __name__ == "__main__":
                                     outcome_map={
                                         'ready_to_land': {'NAVIGATION_3':'sailed','READ_POSITION_3':'ready'}
                                     })
-            
+            """
             #######################################
             smach.StateMachine.add("ARMED", Armed(),
                                    transitions={
@@ -60,6 +72,29 @@ if __name__ == "__main__":
                                         'ready_to_nav' : "WAIT_FOR_POSITION_1"
                                     })
             
+            with con_wait_for_position_1:
+                smach.Concurrence.add('READ_POSITION_1', PositionCheck(target_position=position[0]))
+                smach.Concurrence.add('NAVIGATION_1', Navigate(position[0]))
+
+            
+            smach.StateMachine.add("WAIT_FOR_POSITION_1", con_wait_for_position_1,
+                                   transitions={
+                                        'wait_for_position_1' : "WAIT_FOR_POSITION_1",
+                                        'ready_to_yaw' : "WAIT_FOR_YAW_1"
+                                    })
+            
+            with con_wait_for_yaw_1:
+                smach.Concurrence.add('READ_YAW_1', YawCheck(target_yaw=yaw[0]))
+                smach.Concurrence.add('YAW_1', Yaw(yaw[0]))
+
+            
+            smach.StateMachine.add("WAIT_FOR_YAW_1", con_wait_for_yaw_1,
+                                   transitions={
+                                        'wait_for_yaw_1' : "WAIT_FOR_YAW_1",
+                                        'ready_to_nav' : "LAND"
+                                    })
+            
+            """
             with con_wait_for_position_1:
                 smach.Concurrence.add('READ_POSITION_1', PositionCheck(target_position=position[0]))
                 smach.Concurrence.add('NAVIGATION_1', Navigate(position[0]))
@@ -92,6 +127,8 @@ if __name__ == "__main__":
                                         'wait_for_position_3' : "WAIT_FOR_POSITION_3",
                                         'ready_to_land' : "LAND"
                                     })
+            """
+            
         
             smach.StateMachine.add("LAND", Land(),
                                    transitions={

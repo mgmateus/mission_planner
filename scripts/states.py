@@ -125,7 +125,7 @@ class Navigate(smach.State, BaseController):
         self.__is_runing = True
         return 'wait_for_position'
     
-class Spin(smach.State, BaseController):
+class Yaw(smach.State, BaseController):
     def __init__(self, yaw= None):
         smach.State.__init__(self, outcomes = ['turned', 'wait_for_yaw'], input_keys = ['yaw', 'ready'])
         BaseController.__init__(self)
@@ -134,9 +134,13 @@ class Spin(smach.State, BaseController):
         self.__is_runing = False
         
     def execute(self, userdata):
-        if userdata.ready:
-            self.__is_runing = False
-            return 'sailed'
+        try:
+
+            if userdata.ready:
+                self.__is_runing = False
+                return 'sailed'
+        except:
+            pass
         
         if self.__is_runing:
             return 'wait_for_yaw'
