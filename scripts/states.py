@@ -50,6 +50,7 @@ class YawCheck(smach.State, BaseController):
 
     def execute(self, userdata):
         yaw = self.__target_yaw or userdata.yaw
+        rospy.logwarn(f"target: {yaw} ---- current: {self.get_current_yaw()}")
         if self.is_target_yaw(yaw, self.__threshold):
             
             userdata.ready = True
