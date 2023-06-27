@@ -94,7 +94,7 @@ if __name__ == "__main__":
             smach.StateMachine.add("WAIT_FOR_YAW_1", con_wait_for_yaw_1,
                                    transitions={
                                         'wait_for_yaw_1' : "WAIT_FOR_YAW_1",
-                                        'ready_to_nav_1' : "LAND"
+                                        'ready_to_nav_1' : "succeeded"
                                     })
             
             """

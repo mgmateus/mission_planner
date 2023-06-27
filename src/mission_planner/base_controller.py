@@ -253,9 +253,13 @@ class BaseController():
         try:
             self.set_custom_mode("GUIDED")
 
+            p_x, p_y, p_z = self.current_position.pose.position.x, self.current_position.pose.position.y, self.current_position.pose.position.z
             x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(yaw))
 
             pose = PoseStamped()
+            pose.pose.position.x = p_x
+            pose.pose.position.y = p_y
+            pose.pose.position.z = p_z
             pose.pose.orientation.x = x
             pose.pose.orientation.y = y
             pose.pose.orientation.z = z
