@@ -21,7 +21,7 @@ if __name__ == "__main__":
             con_wait_for_height = smach.Concurrence(outcomes=['wait_for_height','ready_to_nav'],
                                     default_outcome = 'wait_for_height',
                                     outcome_map={
-                                        'ready_to_nav': {'TAKEOFF':'take_off','READ_HEIGHT':'ready'}
+                                        'ready_to_nav': {'TAKEOFF':'take_off'}
                                     })
             
             con_wait_for_yaw_1 = smach.Concurrence(outcomes=['wait_for_yaw_1','ready_to_nav_1'],
