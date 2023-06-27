@@ -281,7 +281,7 @@ class BaseController():
         Returns:
         current_yaw    -- The current yaw of the drone in degrees
         """
-        x, y, z, w = self.current_position.pose.orientation
+        x, y, z, w = self.current_position.pose.orientation.x, self.current_position.pose.orientation.y, self.current_position.pose.orientation.z, self.current_position.pose.orientation.w
         current_yaw = np.degrees(euler_from_quaternion([x, y, z, w]))[2]
         return current_yaw
 
