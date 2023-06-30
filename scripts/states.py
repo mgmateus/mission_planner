@@ -8,7 +8,7 @@ from geometry_msgs.msg import PoseStamped
 
 class RangeFinderCheck(smach.State, BaseController):
     def __init__(self, target_height= None, threshold= 0.15):
-        smach.State.__init__(self, outcomes = ['wait_for_height'], input_keys = ['height'], output_keys = ['ready'])
+        smach.State.__init__(self, outcomes = ['wait_for_height', 'ready'], input_keys = ['height'], output_keys = ['ready'])
         BaseController.__init__(self)
 
         self.__target_height = target_height  
@@ -80,9 +80,9 @@ class TakeOff(smach.State, BaseController):
         self.__is_runing = False 
 
     def execute(self, userdata):
-        if userdata.ready:
-            userdata.ready = False
-            return 'take_off'
+        #if userdata.ready:
+         #   userdata.ready = False
+          #  return 'take_off'
         
         if self.__is_runing:
             return 'wait_for_height'
