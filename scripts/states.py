@@ -59,7 +59,7 @@ class Navigate(smach.State, BaseController):
 
 class WaypointNavigate(smach.State, BaseController):
     def __init__(self):
-        smach.State.__init__(self, outcomes = ['wait_for_position'], input_key = ['waypoint'])
+        smach.State.__init__(self, outcomes = ['wait_for_position'], input_keys = ['waypoint'])
         BaseController.__init__(self)
 
     def execute(self, userdata):
