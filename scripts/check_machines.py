@@ -213,7 +213,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                         {'succeeded':'GO_TO_WAIPOINT'})
         
         
-        sm_goto = goto(sm.userdata.waypoint)
+        sm_goto = goto_waypoint(sm.userdata.waypoint)
 
         smach.StateMachine.add("GO_TO_WAIPOINT", sm_goto,
                                 transitions={
