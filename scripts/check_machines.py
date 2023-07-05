@@ -1,6 +1,5 @@
 import rospy
 import smach
-from smach import CBState
 from typing import *
 from check_states import *
 from states import *
@@ -67,7 +66,7 @@ def check_navigation(target_height : float, waypoint : List) -> smach.StateMachi
                                         'wait_for_position' : "CHECK_POSITION"
                                     })
         
-        smach.StateMachine.add("CHECK_POSITION", PositionCheck(target_position=position),
+        smach.StateMachine.add("CHECK_POSITION", PositionCheck(target_position=waypoint),
                                    transitions={
                                         'wait_for_position' : "CHECK_POSITION",
                                         'ready' : "CHECK_END"
@@ -132,7 +131,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                     ud.waypoint = ud.waypoints.pop(0)
                     return 'succeeded'
 
-                smach.StateMachine.add('POP_WAIPOINT', CBState(pop_waypoint_cb), 
+                smach.StateMachine.add('POP_WAIPOINT', smach.CBState(pop_waypoint_cb), 
                                 {'succeeded':'GO_TO'})
                 
                 sm_goto = goto(target_height, sm.userdata.waypoint)
@@ -148,14 +147,14 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                 def finished_waypoints_cb(ud):
                     return 'succeeded' if len(ud.waypoints) == 0 else 'continue'
                 
-                smach.StateMachine.add('CHECK_WAIPOINTS', CBState(finished_waypoints_cb), 
+                smach.StateMachine.add('CHECK_WAIPOINTS', smach.CBState(finished_waypoints_cb), 
                                 {'succeeded':'succeeded',
                                 'continue':'continue'
                                 })
 
             
             #close container_sm
-            Iterator.set_contained_state('CONTAINER_STATE', 
+            smach.Iterator.set_contained_state('CONTAINER_STATE', 
                                         container_sm, 
                                         loop_outcomes=['continue'])
         #close it_goto        
