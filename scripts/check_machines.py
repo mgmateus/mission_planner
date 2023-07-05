@@ -99,8 +99,6 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
     """
 
     sm = smach.StateMachine(outcomes=["succeeded"])
-    sm.userdata.waypoints = waypoints
-    sm.userdata.waypoint = sm.userdata.waypoints.pop(0)
     with sm:
         sm_mission_start = mission_start(target_height)
         
@@ -112,7 +110,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
         it_goto = smach.Iterator(outcomes = ['succeeded'],
                                     input_keys = ['waypoints', 'waypoint'],
                                     output_keys=['waypoints', 'waypoint'],
-                                    it = lambda: range(0, len(sm.userdata.waypoints)),
+                                    it = lambda: range(0, len(waypoints)),
                                     it_label = 'i',
                                     exhausted_outcome = 'succeeded')
         
@@ -121,6 +119,9 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                             input_keys = ['waypoints', 'waypoint'],
                                             output_keys = ['waypoints', 'waypoint'])
             
+            container_sm.userdata.waypoints = waypoints
+            container_sm.userdata.waypoint = container_sm.userdata.waypoints.pop(0)
+
             with container_sm:
 
                 @smach.cb_interface(input_keys=['waypoints', 'waypoint'],
@@ -128,25 +129,29 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                     outcomes=['succeeded'])
                 
                 def pop_waypoint_cb(ud):
-                    sm.userdata.waypoint = sm.userdata.waypoints.pop(0)
+                    ud.waypoint = ud.waypoints.pop(0)
                     return 'succeeded'
 
                 smach.StateMachine.add('POP_WAIPOINT', smach.CBState(pop_waypoint_cb), 
                                 {'succeeded':'GO_TO_WAIPOINT'})
                 
                 
-                sm_goto = goto(sm.userdata.waypoint)
-                
-                smach.StateMachine.add("GO_TO_WAIPOINT", sm_goto,
-                                    transitions={
-                                        "succeeded" : "CHECK_WAIPOINTS"
+                smach.StateMachine.add("GO_TO_WAIPOINT", Navigate(position=container_sm.userdata.waypoint),
+                                   transitions={
+                                        'wait_for_position' : "CHECK_POSITION"
                                     })
+        
+                smach.StateMachine.add("CHECK_POSITION", PositionCheck(target_position=container_sm.userdata.waypoint),
+                                        transitions={
+                                                'wait_for_position' : "CHECK_POSITION",
+                                                'ready' : "CHECK_WAIPOINTS"
+                                            })
                 
                 @smach.cb_interface(input_keys=['waypoints'],   
                                     outcomes=['succeeded', 'continue'])
                 
                 def finished_waypoints_cb(ud):
-                    return 'succeeded' if len(sm.userdata.waypoints) == 0 else 'continue'
+                    return 'succeeded' if len(ud.waypoints) == 0 else 'continue'
                 
                 smach.StateMachine.add('CHECK_WAIPOINTS', smach.CBState(finished_waypoints_cb), 
                                 {'succeeded':'succeeded',
