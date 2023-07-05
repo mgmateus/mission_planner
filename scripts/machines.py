@@ -57,12 +57,6 @@ def goto(target_height : float, waypoint : List) -> smach.StateMachine:
     sm = smach.StateMachine(outcomes=["succeeded"])
 
     with sm:
-        sm_mission_start = mission_start(target_height)
-
-        smach.StateMachine.add("FLYING", sm_mission_start,
-                                   transitions={
-                                        "succeeded" : "GO_TO"
-                                    })
         
         smach.StateMachine.add("GO_TO", Navigate(position=waypoint),
                                    transitions={
