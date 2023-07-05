@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """This is an example of how to do mission planning using BaseController. Do not run this module!"""
 import rospy
-from machines import pilot_flight, test_nav, test_altitude_ajust
+from test_machines import pilot_flight, test_nav, test_altitude_ajust
 
 if __name__ == "__main__":
     rospy.init_node("mission_plane_0_node")
