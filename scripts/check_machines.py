@@ -7,7 +7,7 @@ from states import *
 from machines import *
 
 
-def pilot_flight(target_height : float) -> smach.StateMachine:
+def check_flight(target_height : float) -> smach.StateMachine:
     """
     Create the machine to check drone in flight
 
@@ -37,7 +37,7 @@ def pilot_flight(target_height : float) -> smach.StateMachine:
         
     return sm
 
-def test_nav(target_height : float, waypoint : List) -> smach.StateMachine:
+def check_navigation(target_height : float, waypoint : List) -> smach.StateMachine:
     """
     Create the machine to test navigation with discreted waypoint
 
@@ -87,7 +87,7 @@ def test_nav(target_height : float, waypoint : List) -> smach.StateMachine:
         
     return sm
 
-def waypoint_navigation(target_height : float, waypoints : List) -> smach.StateMachine:
+def check_waypoints_navigations(target_height : float, waypoints : List) -> smach.StateMachine:
     """
     Create the machine to test navigation with waypoints
 
