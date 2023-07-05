@@ -56,6 +56,17 @@ class Navigate(smach.State, BaseController):
         x, y, z = self.__position 
         self.set_position(position_x= x, position_y= y, position_z= z)
         return 'wait_for_position'
+
+class WaypointNavigate(smach.State, BaseController):
+    def __init__(self):
+        smach.State.__init__(self, outcomes = ['wait_for_position'], input_key = ['waypoint'])
+        BaseController.__init__(self)
+
+    def execute(self, userdata):
+        rospy.logwarn(userdata.waypoint)
+        x, y, z = userdata.waypoint 
+        self.set_position(position_x= x, position_y= y, position_z= z)
+        return 'wait_for_position'
     
 class Yaw(smach.State, BaseController):
     def __init__(self, yaw= None):

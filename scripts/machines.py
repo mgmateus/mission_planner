@@ -71,6 +71,38 @@ def goto(waypoint : List) -> smach.StateMachine:
 
 
     return sm
+
+def goto_waypoint(waypoint : List) -> smach.StateMachine:
+    """
+    Create the start machine navigate to waypoint
+
+    Params:
+    target_height: altitude to take off
+
+    Returns:
+    sm: the machine object machine 
+    """
+
+    sm = smach.StateMachine(outcomes=["succeeded"],
+                            input_keys=["waypoint"])
+
+    with sm:
+        
+        smach.StateMachine.add("GO_TO", WaypointNavigate(),
+                                input_keys=["waypoint"],
+                                transitions={
+                                    'wait_for_position' : "CHECK_POSITION"
+                                })
+        
+        smach.StateMachine.add("CHECK_POSITION", WaypointCheck(),
+                                input_keys=["waypoint"],
+                                transitions={
+                                    'wait_for_position' : "CHECK_POSITION",
+                                    'ready' : "succeeded"
+                                })
+
+
+    return sm
         
 
 

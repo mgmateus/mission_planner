@@ -37,6 +37,19 @@ class PositionCheck(smach.State, BaseController):
         else:
             return 'wait_for_position'
         
+class WaypointCheck(smach.State, BaseController):
+    def __init__(self, threshold : float = 0.02):
+        smach.State.__init__(self, outcomes = ['wait_for_waypoint', 'ready'], input_keys = ['waypoint'])
+        BaseController.__init__(self)
+
+        self.__threshold = threshold
+
+    def execute(self, userdata):
+        if self.is_target_position(userdata.waypoint, self.__threshold):
+            return 'ready'
+        else:
+            return 'wait_for_waypoint'
+        
 class YawCheck(smach.State, BaseController):
     def __init__(self, target_yaw= None, threshold= 5.0):
         smach.State.__init__(self, outcomes = ['wait_for_yaw'], input_keys = ['yaw'], output_keys = ['position','ready'])
