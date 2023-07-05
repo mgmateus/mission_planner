@@ -42,7 +42,7 @@ class PositionCheck(smach.State, BaseController):
         
 class YawCheck(smach.State, BaseController):
     def __init__(self, target_yaw= None, threshold= 5.0):
-        smach.State.__init__(self, outcomes = ['wait_for_yaw'], input_keys = ['yaw'], output_keys = ['ready'])
+        smach.State.__init__(self, outcomes = ['wait_for_yaw'], input_keys = ['yaw'], output_keys = ['position','ready'])
         BaseController.__init__(self)
 
         self.__target_yaw = target_yaw 
