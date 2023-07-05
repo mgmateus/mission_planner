@@ -111,21 +111,21 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                 })
         
         it_goto = smach.Iterator(outcomes = ['succeeded'],
-                                    input_keys = ['waypoints'],
-                                    output_keys=['waypoint'],
+                                    input_keys = ['waypoints', 'waypoint'],
+                                    output_keys=['waypoints', 'waypoint'],
                                     it = lambda: range(0, len(waypoints)),
                                     it_label = 'i',
                                     exhausted_outcome = 'succeeded')
         
         with it_goto:
             container_sm = smach.StateMachine(outcomes = ['succeeded','continue'],
-                                            input_keys = ['waypoints'],
-                                            output_keys = ['waypoint'])
+                                            input_keys = ['waypoints', 'waypoint'],
+                                            output_keys = ['waypoints', 'waypoint'])
             
             with container_sm:
 
-                @smach.cb_interface(input_keys=['waypoints'],
-                                    output_keys=['waypoint'], 
+                @smach.cb_interface(input_keys=['waypoints', 'waypoint'],
+                                    output_keys=['waypoints', 'waypoint'], 
                                     outcomes=['succeeded'])
                 
                 def pop_waypoint_cb(ud):
@@ -142,8 +142,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                         "succeeded" : "CHECK_WAIPOINTS"
                                     })
                 
-                @smach.cb_interface(input_keys=['waypoints'],
-                                    output_keys=['waypoints'], 
+                @smach.cb_interface(input_keys=['waypoints']
                                     outcomes=['succeeded', 'continue'])
                 
                 def finished_waypoints_cb(ud):
