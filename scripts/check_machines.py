@@ -101,7 +101,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
 
     sm = smach.StateMachine(outcomes=["succeeded"])
     sm.userdata.waypoints = waypoints
-
+    sm.userdata.waypoint = None
     with sm:
         sm_mission_start = mission_start(target_height)
         
@@ -142,7 +142,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                         "succeeded" : "CHECK_WAIPOINTS"
                                     })
                 
-                @smach.cb_interface(input_keys=['waypoints'],
+                @smach.cb_interface(input_keys=['waypoints'],   
                                     outcomes=['succeeded', 'continue'])
                 
                 def finished_waypoints_cb(ud):
