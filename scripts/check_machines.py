@@ -237,3 +237,5 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                transitions={
                                    "land": "succeeded"
                                })
+        
+    return sm 
