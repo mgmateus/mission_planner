@@ -91,13 +91,13 @@ def goto_waypoint(waypoint : List) -> smach.StateMachine:
         smach.StateMachine.add("GO_TO", WaypointNavigate(),
                                 input_keys=["waypoint"],
                                 transitions={
-                                    'wait_for_position' : "CHECK_POSITION"
+                                    'wait_for_waypoint' : "CHECK_POSITION"
                                 })
         
         smach.StateMachine.add("CHECK_POSITION", WaypointCheck(),
                                 input_keys=["waypoint"],
                                 transitions={
-                                    'wait_for_position' : "CHECK_POSITION",
+                                    'wait_for_waypoint' : "CHECK_POSITION",
                                     'ready' : "succeeded"
                                 })
 
