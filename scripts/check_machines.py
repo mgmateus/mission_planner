@@ -99,7 +99,8 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
     """
 
     sm = smach.StateMachine(outcomes=["succeeded"])
-    
+    sm.userdata.waypoints = waypoints
+    sm.userdata.waypoint = None
     with sm:
         sm_mission_start = mission_start(target_height)
         
@@ -115,9 +116,6 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                     it_label = 'i',
                                     exhausted_outcome = 'succeeded')
         
-        it_goto.userdata.waypoints = waypoints
-        it_goto.userdata.waypoint = None
-        
         with it_goto:
             container_sm = smach.StateMachine(outcomes = ['succeeded','continue'],
                                             input_keys = ['waypoints', 'waypoint'],
@@ -130,8 +128,8 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                     outcomes=['succeeded'])
                 
                 def pop_waypoint_cb(ud):
-                    ud.waypoint = ud.waypoints.pop(0)
-                    rospy.logwarn(f"ud: {ud.waypoint}, sm: {sm.userdata.waypoint}")
+                    sm.userdata.waypoint = sm.userdata.waypoints.pop(0)
+                    rospy.logwarn(f"{sm.userdata.waypoint}, {sm.userdata.waypoints}")
                     return 'succeeded'
 
                 smach.StateMachine.add('POP_WAIPOINT', smach.CBState(pop_waypoint_cb), 
@@ -148,7 +146,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                     outcomes=['succeeded', 'continue'])
                 
                 def finished_waypoints_cb(ud):
-                    return 'succeeded' if len(ud.waypoints) == 0 else 'continue'
+                    return 'succeeded' if len(sm.userdata.waypoints) == 0 else 'continue'
                 
                 smach.StateMachine.add('CHECK_WAIPOINTS', smach.CBState(finished_waypoints_cb), 
                                 {'succeeded':'succeeded',
