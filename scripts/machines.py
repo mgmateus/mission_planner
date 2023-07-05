@@ -18,6 +18,7 @@ def mission_start(target_height : float) -> smach.StateMachine:
     sm = smach.StateMachine(outcomes=["succeeded"])
 
     with sm:
+        rospy.rospy.logwarn('MISSION_START')
         smach.StateMachine.add("WAIT_ARMED",
                                 Armed(),
                                 transitions={
