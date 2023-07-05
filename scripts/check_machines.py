@@ -129,12 +129,13 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                 
                 def pop_waypoint_cb(ud):
                     sm.userdata.waypoint = sm.userdata.waypoints.pop(0)
-                    rospy.logwarn(f"{sm.userdata.waypoint}, {sm.userdata.waypoints}")
+                    
                     return 'succeeded'
 
                 smach.StateMachine.add('POP_WAIPOINT', smach.CBState(pop_waypoint_cb), 
                                 {'succeeded':'GO_TO_WAIPOINT'})
                 
+                rospy.logwarn(f"{sm.userdata.waypoint}, {sm.userdata.waypoints}")
                 sm_goto = goto(target_height, sm.userdata.waypoint)
                 
                 smach.StateMachine.add("GO_TO_WAIPOINT", sm_goto,
