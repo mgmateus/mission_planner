@@ -100,7 +100,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
 
     sm = smach.StateMachine(outcomes=["succeeded"])
     sm.userdata.waypoints = waypoints
-    sm.userdata.waypoint = [0, 0 ,0]
+    sm.userdata.waypoint = sm.userdata.waypoints.pop(0)
     with sm:
         sm_mission_start = mission_start(target_height)
         
