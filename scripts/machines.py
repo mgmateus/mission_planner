@@ -43,7 +43,7 @@ def mission_start(target_height : float) -> smach.StateMachine:
     return sm
         
     
-def goto(target_height : float, waypoint : List) -> smach.StateMachine:
+def goto(waypoint : List) -> smach.StateMachine:
     """
     Create the start machine navigate to waypoint
 
