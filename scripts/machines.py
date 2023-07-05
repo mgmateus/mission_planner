@@ -115,7 +115,7 @@ def test_nav(target_height : float, position : List) -> smach.StateMachine:
         
         smach.StateMachine.add("GO_TO", Navigate(position=position),
                                    transitions={
-                                        'wait_for_position' : "GO_TO"
+                                        'wait_for_position' : "CHECK_POSITION"
                                     })
         
         smach.StateMachine.add("CHECK_POSITION", PositionCheck(target_position=position),
