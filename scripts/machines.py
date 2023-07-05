@@ -18,7 +18,6 @@ def mission_start(target_height : float) -> smach.StateMachine:
     sm = smach.StateMachine(outcomes=["succeeded"])
 
     with sm:
-        rospy.logwarn('MISSION_START')
         smach.StateMachine.add("WAIT_ARMED",
                                 Armed(),
                                 transitions={
@@ -40,6 +39,8 @@ def mission_start(target_height : float) -> smach.StateMachine:
                                     "ready": "succeeded"
                                 })
         
+    return sm
+        
     
 def pilot_flight(target_height : float) -> smach.StateMachine:
     """
@@ -55,6 +56,8 @@ def pilot_flight(target_height : float) -> smach.StateMachine:
 
     with sm:
         sm_mission_start = mission_start(target_height)
+
+        
         
         smach.StateMachine.add("FLING", sm_mission_start,
                                    transitions={
@@ -66,6 +69,8 @@ def pilot_flight(target_height : float) -> smach.StateMachine:
                                transitions={
                                    "land": "succeeded"
                                })
+        
+    return sm
     
 def goto(target_height : float, position : List) -> smach.StateMachine:
 
@@ -89,6 +94,9 @@ def goto(target_height : float, position : List) -> smach.StateMachine:
                                         'wait_for_position' : "CHECK_POSITION",
                                         'ready' : "succeeded"
                                     })
+
+
+    return sm
         
 def test_nav(target_height : float, position : List) -> smach.StateMachine:
 
@@ -118,3 +126,5 @@ def test_nav(target_height : float, position : List) -> smach.StateMachine:
                                         'wait_for_position' : "GO_TO",
                                         'ready' : "succeeded"
                                     })
+        
+    return sm
