@@ -142,7 +142,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                         "succeeded" : "CHECK_WAIPOINTS"
                                     })
                 
-                @smach.cb_interface(input_keys=['waypoints']
+                @smach.cb_interface(input_keys=['waypoints'],
                                     outcomes=['succeeded', 'continue'])
                 
                 def finished_waypoints_cb(ud):
