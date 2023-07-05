@@ -128,8 +128,8 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                     output_keys=['waypoints', 'waypoint'], 
                                     outcomes=['succeeded'])
                 
-                def pop_waypoint_cb(ud):
-                    ud.waypoint = ud.waypoints.pop(0)
+                def pop_waypoint_cb(userdata):
+                    userdata.waypoint = userdata.waypoints.pop(0)
                     return 'succeeded'
 
                 smach.StateMachine.add('POP_WAIPOINT', smach.CBState(pop_waypoint_cb), 
@@ -150,8 +150,8 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                 @smach.cb_interface(input_keys=['waypoints'],   
                                     outcomes=['succeeded', 'continue'])
                 
-                def finished_waypoints_cb(ud):
-                    return 'succeeded' if len(ud.waypoints) == 0 else 'continue'
+                def finished_waypoints_cb(userdata):
+                    return 'succeeded' if len(userdata.waypoints) == 0 else 'continue'
                 
                 smach.StateMachine.add('CHECK_WAIPOINTS', smach.CBState(finished_waypoints_cb), 
                                 {'succeeded':'succeeded',
