@@ -129,6 +129,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                 
                 def pop_waypoint_cb(ud):
                     ud.waypoint = ud.waypoints.pop(0)
+                    rospy.logwarn(f"ud: {ud.waypoint}, sm: {sm.userdata.waypoint}")
                     return 'succeeded'
 
                 smach.StateMachine.add('POP_WAIPOINT', smach.CBState(pop_waypoint_cb), 
