@@ -47,11 +47,12 @@ class Navigate(smach.State, BaseController):
     def __init__(self, position : List):
         smach.State.__init__(self, outcomes = ['wait_for_position'])
         BaseController.__init__(self)
-        
+
         self.__position = position
         self.__is_runing = False
         
     def execute(self, userdata):
+        rospy.logwarn(self.__position)
         x, y, z = self.__position 
         self.set_position(position_x= x, position_y= y, position_z= z)
         return 'wait_for_position'
