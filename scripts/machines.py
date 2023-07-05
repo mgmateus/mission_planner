@@ -124,7 +124,13 @@ def test_nav(target_height : float, position : List) -> smach.StateMachine:
         smach.StateMachine.add("CHECK_END", PositionCheck(target_position=position[0] + 0.4),
                                    transitions={
                                         'wait_for_position' : "GO_TO",
-                                        'ready' : "succeeded"
+                                        'ready' : "LAND"
                                     })
+        
+        smach.StateMachine.add("LAND",
+                               Land(),
+                               transitions={
+                                   "land": "succeeded"
+                               })
         
     return sm
