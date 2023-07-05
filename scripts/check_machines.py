@@ -87,7 +87,7 @@ def check_navigation(target_height : float, waypoint : List) -> smach.StateMachi
         
     return sm
 
-def check_waypoints_navigations(target_height : float, waypoints : List) -> smach.StateMachine:
+def check_waypoints_navigation(target_height : float, waypoints : List) -> smach.StateMachine:
     """
     Create the machine to test navigation with waypoints
 
