@@ -99,8 +99,7 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
     """
 
     sm = smach.StateMachine(outcomes=["succeeded"])
-    sm.userdata.waypoints = waypoints
-    sm.userdata.waypoint = None
+    
     with sm:
         sm_mission_start = mission_start(target_height)
         
@@ -110,8 +109,6 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                 })
         
         it_goto = smach.Iterator(outcomes = ['succeeded'],
-                                    input_keys = ['waypoints', 'waypoint'],
-                                    output_keys=['waypoints', 'waypoint'],
                                     it = lambda: range(0, len(waypoints)),
                                     it_label = 'i',
                                     exhausted_outcome = 'succeeded')
@@ -120,6 +117,9 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
             container_sm = smach.StateMachine(outcomes = ['succeeded','continue'],
                                             input_keys = ['waypoints', 'waypoint'],
                                             output_keys = ['waypoints', 'waypoint'])
+            
+            container_sm.userdata.waypoints = waypoints
+            container_sm.userdata.waypoint = None
             
             with container_sm:
 
