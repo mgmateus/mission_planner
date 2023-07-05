@@ -103,7 +103,7 @@ def test_nav(target_height : float, position : List) -> smach.StateMachine:
     sm = smach.StateMachine(outcomes=["succeeded"])
 
     check_position = position
-    check_position[0] = check_position[0] + 0.4
+    check_position[0] = check_position[0] + 0.25
 
     with sm:
         sm_mission_start = mission_start(target_height)
