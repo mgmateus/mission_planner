@@ -72,7 +72,7 @@ def goto(waypoint : List) -> smach.StateMachine:
 
     return sm
 
-def goto_waypoint(waypoint : List) -> smach.StateMachine:
+def goto_waypoint() -> smach.StateMachine:
     """
     Create the start machine navigate to waypoint
 
