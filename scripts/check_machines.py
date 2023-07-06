@@ -228,12 +228,11 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
         
         smach.StateMachine.add('CHECK_WAIPOINTS', smach.CBState(finished_waypoints_cb), 
                         {'succeeded':'LAND',
-                        'continue':'POP_WAIPOINT'
+                         'continue':'POP_WAIPOINT'
                         })
         
         
-        smach.StateMachine.add("LAND",
-                               Land(),
+        smach.StateMachine.add("LAND", Land(),
                                transitions={
                                    "land": "succeeded"
                                })
