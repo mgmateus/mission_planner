@@ -11,9 +11,9 @@ if __name__ == "__main__":
     target = [0.25, 0.0, 0.6]
     waypoints = [[1.2, 0.0, height], [1.2, 0.0, 1.5], [0.0, 0.0, 1.5]]
 
-    sm_mission = check_flight(1.0)
+    #sm_mission = check_flight(1.0)
 
-    #sm_mission = check_waypoints_navigation(height, waypoints)
+    sm_mission = check_waypoints_navigation(height, waypoints)
     
     # Execute SMACH plan
     outcome = sm_mission.execute()
