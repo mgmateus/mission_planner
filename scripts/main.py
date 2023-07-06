@@ -9,7 +9,7 @@ if __name__ == "__main__":
     # Create a SMACH state machine
     height = 0.6
     target = [0.25, 0.0, 0.6]
-    waypoints = [[1.2, 0.0, height], [1.2, 0.0, 1.0], [0.0, 0.0, 1.0]]
+    waypoints = [[1.2, 0.0, height], [1.2, 0.0, 1.5], [0.0, 0.0, 1.5]]
 
     #sm_mission = check_flight(1.0)
 
