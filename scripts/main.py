@@ -21,9 +21,9 @@ if __name__ == "__main__":
 
     #sm_mission = check_turne(height, turne) #teste do giro
 
-    #sm_mission = check_navigation(height, target, turne) #teste do path com giro
+    sm_mission = check_navigation(height, target, turne) #teste do path com giro
 
-    sm_mission = check_move_on(height,target) #teste mover com velocidade
+    #sm_mission = check_move_on(height,target) #teste mover com velocidade
     
     # Execute SMACH plan
     outcome = sm_mission.execute()
