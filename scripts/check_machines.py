@@ -309,3 +309,44 @@ def check_turne(target_height : float, target_turne : float) -> smach.StateMachi
                                })
         
     return sm
+
+def check_move_on(target_height : float, waypoint : List) -> smach.StateMachine:
+    """
+    Create the machine to test navigation with discreted waypoint
+
+    Params:
+    target_height: altitude to take off
+    waypoint: waypoint as [x, y, z]
+
+    Returns:
+    sm: the machine object machine 
+    """
+
+    sm = smach.StateMachine(outcomes=["succeeded"])
+
+
+    with sm:
+        sm_mission_start = mission_start(target_height)
+
+        smach.StateMachine.add("FLYING", sm_mission_start,
+                                   transitions={
+                                        "succeeded" : "GO_TO"
+                                    })
+        
+        smach.StateMachine.add("GO_TO", VelocityNavigate(0.1, 0.0),
+                                   transitions={
+                                        'wait_for_position' : "CHECK_POSITION"
+                                    })
+        
+        smach.StateMachine.add("CHECK_POSITION", PositionCheck(target_position=waypoint),
+                                   transitions={
+                                        'wait_for_position' : "CHECK_POSITION",
+                                        'ready' : "LAND"
+                                    })
+        
+        smach.StateMachine.add("LAND", Land(),
+                               transitions={
+                                   "land": "succeeded"
+                               })
+        
+    return sm

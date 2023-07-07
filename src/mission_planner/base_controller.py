@@ -9,11 +9,12 @@ from mavros_msgs.srv import (
     CommandBool,
     CommandTOL,
     SetMode,
-    StreamRate
+    StreamRate,
+    SetMavFrame
 )
 from mavros_msgs.msg import State
 from sensor_msgs.msg import Range
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, TwistStamped
 
 class BaseController():
     """BaseController is used to call the services from mavlink using mavros.
@@ -64,9 +65,11 @@ class BaseController():
         self.__service_setmode = rospy.get_param("services/setmode")
         self.__service_land = rospy.get_param("services/land")
         self.__service_streamrate = rospy.get_param("services/stream_rate")
+        self.__service_set_frame = rospy.get_param("services/set_frame")
 
         # Publishers
         self.__setpoint_local = rospy.get_param("publishers/setpoint_position_local")
+        self.__setpoint_cmd_vel = rospy.get_param("publishers/setpoint_velocity_cmd_vel")
 
         # Subscribers
         self.__state = rospy.get_param("subscribers/state")
@@ -83,6 +86,7 @@ class BaseController():
         self.__service_setmode_proxy = rospy.ServiceProxy(self.__service_setmode, SetMode)
         self.__service_land_proxy = rospy.ServiceProxy(self.__service_land, CommandTOL)
         self.__service_streamrate_proxy = rospy.ServiceProxy(self.__service_streamrate, StreamRate)
+        self.__service_set_frame_proxy = rospy.ServiceProxy(self.__service_set_frame, SetMavFrame)
 
     def __init_publishers(self) -> None:
         """Start the publishers"""
@@ -90,6 +94,11 @@ class BaseController():
                                                           PoseStamped, \
                                                           queue_size=1)
 
+
+        self.__publisher_setpoint_cmd_vel = rospy.Publisher(self.__setpoint_cmd_vel, \
+                                                          PoseStamped, \
+                                                          queue_size=1)
+        
     def __init_subscribers(self) -> None:
         """Start the subscribers"""
         rospy.Subscriber(self.__state, State, \
@@ -119,6 +128,8 @@ class BaseController():
             rospy.wait_for_service(self.__service_setmode, timeout=services_timeout)
             rospy.wait_for_service(self.__service_land, timeout=services_timeout)
             rospy.wait_for_service(self.__service_streamrate, timeout=services_timeout)
+            rospy.wait_for_service(self.__service_set_frame, timeout=services_timeout)
+
         except rospy.ROSException as ros_exception:
             raise rospy.ROSException from ros_exception
 
@@ -195,6 +206,27 @@ class BaseController():
             return response.mode_sent
         except rospy.ServiceException as service_exception:
             raise rospy.ServiceException from service_exception
+    
+    def set_custom_frame(self, custom_frame: int = ""):
+        """This method set a custom mode to UAV
+
+        Keywords arguments:
+        custom_mode -- The custom mode string that specifies the desired mode of the UAV, allowing you to set a specific behavior or flight mode defined in the flight controller or autopilot software.
+
+        Possible custom modes:
+        - [STABILIZE, ACRO, ALT_HOLD, AUTO, GUIDED, LOITER, RTL, CIRCLE, POSITION, LAND, OF_LOITER, DRIFT, SPORT, FLIP, AUTOTUNE, POSHOLD, BRAKE, THROW, AVOID_ADSB, GUIDED_NOGPS]
+
+        Returns:
+        response.mode_sent -- returns true if the service worked correctly.
+        """
+        frame = SetMavFrame()
+        frame.mav_frame = custom_frame
+        try:
+            response = self.__service_set_frame_proxy(frame)
+            return response.mode_sent
+        except rospy.ServiceException as service_exception:
+            raise rospy.ServiceException from service_exception
+    
 
     def land(self, min_pitch: float = 0.0, yaw: float = 0.0, latitude: float = 0.0, \
                 longitude: float = 0.0, altitude: float = 0.0) -> bool:
@@ -242,6 +274,34 @@ class BaseController():
         except rospy.ROSException as ros_exception:
             raise rospy.ROSException from ros_exception
         
+    def set_velocity(self, x: float = 0.0, z: float = 0.0) -> bool:
+        """This method publish a PoseStamped message in setpoint_position/local
+        
+        Keywords arguments:
+        position_x  -- The target position in x
+        position_z  -- The target position in z
+
+        Returns:
+        True
+        """
+        try:
+            self.set_custom_mode("GUIDED")
+
+            vel = TwistStamped()
+            vel.twist.linear.x = x
+            vel.twist.linear.y = 0.0
+            vel.twist.linear.z = z
+
+            vel.twist.angular.x = 0.0
+            vel.twist.angular.y = 0.0
+            vel.twist.angular.z = 0.0
+
+            self.__publisher_setpoint_cmd_vel.publish(vel)
+
+            return True
+        except rospy.ROSException as ros_exception:
+            raise rospy.ROSException from ros_exception
+        
     def set_turne(self, turne: float = 0.0) -> bool:
         """This method publish a PoseStamped message in setpoint_position/local
         
@@ -253,6 +313,7 @@ class BaseController():
         """
         try:
             self.set_custom_mode("GUIDED")
+            self.set_custom_frame(12)
 
             p_x, p_y, p_z = self.__turne_position
             x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(turne))

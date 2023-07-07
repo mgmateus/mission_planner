@@ -2,7 +2,7 @@
 """This is an example of how to do mission planning using BaseController. Do not run this module!"""
 import rospy
 from machines import mission_start
-from check_machines import check_flight, check_navigation, check_waypoints_navigation, check_turne
+from check_machines import check_flight, check_navigation, check_waypoints_navigation, check_turne, check_move_on
 
 if __name__ == "__main__":
     rospy.init_node("mission_plane_0_node")
@@ -21,9 +21,9 @@ if __name__ == "__main__":
 
     #sm_mission = check_turne(height, turne) #teste do giro
 
-    sm_mission = check_navigation(height, target, turne) #teste do path com giro
+    #sm_mission = check_navigation(height, target, turne) #teste do path com giro
 
-
+    sm_mission = check_move_on(height,target) #teste mover com velocidade
     
     # Execute SMACH plan
     outcome = sm_mission.execute()

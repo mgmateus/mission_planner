@@ -5,10 +5,12 @@ services:
   setmode: "/mavros/set_mode"
   land: "/mavros/cmd/land"
   stream_rate: "/mavros/set_stream_rate"
+  set_frame : "/mavros/setpoint_position/mav_frame"
 
 publishers:
 
   setpoint_position_local: "/mavros/setpoint_position/local"
+  setpoint_velocity_cmd_vel: "/mavros/setpoint_velocity/cmd_vel"
 
 subscribers:
 

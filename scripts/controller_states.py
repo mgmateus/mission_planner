@@ -51,6 +51,18 @@ class Navigate(smach.State, BaseController):
         self.set_position(position_x= x, position_y= y, position_z= z)
         return 'wait_for_position'
 
+class VelocityNavigate(smach.State, BaseController):
+    def __init__(self, x : float, z : float):
+        smach.State.__init__(self, outcomes = ['wait_for_position'])
+        BaseController.__init__(self)
+
+        self.__vel = [x, z]
+        
+    def execute(self, userdata):
+        x, z = self.__vel
+        self.set_velocity(x, z)
+        return 'wait_for_position'
+    
 class WaypointNavigate(smach.State, BaseController):
     def __init__(self):
         smach.State.__init__(self, outcomes = ['wait_for_waypoint'], input_keys = ['waypoint'])
