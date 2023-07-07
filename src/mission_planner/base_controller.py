@@ -135,6 +135,7 @@ class BaseController():
 
     def __enable_mavros_topics(self) -> bool:
         """Enable the topics of mavros"""
+        self.set_custom_frame(16)
         try:
             self.__service_streamrate_proxy(stream_id=0, message_rate=10, on_off=True)
             return True
@@ -311,7 +312,7 @@ class BaseController():
         """
         try:
             self.set_custom_mode("GUIDED")
-            self.set_custom_frame(16)
+            
 
             p_x, p_y, p_z = self.__turne_position
             x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(turne))
