@@ -1,5 +1,7 @@
 import rospy
 import smach
+import time
+
 from typing import *
 from check_states import *
 from controller_states import *
@@ -254,23 +256,24 @@ def check_turne(target_height : float, target_turne : float) -> smach.StateMachi
     sm = smach.StateMachine(outcomes=["succeeded"])
     
     sm.userdata.turne = target_turne
-    sm.userdata.waypoint = None
+    
 
     with sm:
         sm_mission_start = mission_start(target_height)
 
         smach.StateMachine.add("FLYING", sm_mission_start,
                                 transitions={
-                                    #"succeeded" : "GO_TO_WAIPOINT"
-                                    "succeeded" : "TURNE"
+                                    "succeeded" : "GO_TO_WAIPOINT"
                                 })
         
         sm_goto_waypoint = goto_waypoint()
 
-        #smach.StateMachine.add("GO_TO_WAIPOINT", sm_goto_waypoint,
-        #                        transitions={
-        #                            "succeeded" : "TURNE"
-        #                        })
+        smach.StateMachine.add("GO_TO_WAIPOINT", sm_goto_waypoint,
+                                transitions={
+                                    "succeeded" : "TURNE"
+                                })
+        
+        time.sleep(5)
         
         smach.StateMachine.add("TURNE", Turnaround(),
                                 transitions={
