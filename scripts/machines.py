@@ -121,7 +121,7 @@ def turne(turne : float = 0.0) -> smach.StateMachine:
                             input_keys=["turne"],
                             output_keys=['turne'])
     
-    sm.userdate.turne = turne
+    sm.userdata.turne = turne
 
     with sm:
         
