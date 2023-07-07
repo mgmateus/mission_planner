@@ -261,15 +261,16 @@ def check_turne(target_height : float, target_turne : float) -> smach.StateMachi
 
         smach.StateMachine.add("FLYING", sm_mission_start,
                                 transitions={
-                                    "succeeded" : "GO_TO_WAIPOINT"
+                                    #"succeeded" : "GO_TO_WAIPOINT"
+                                    "succeeded" : "TURNE"
                                 })
         
         sm_goto_waypoint = goto_waypoint()
 
-        smach.StateMachine.add("GO_TO_WAIPOINT", sm_goto_waypoint,
-                                transitions={
-                                    "succeeded" : "TURNE"
-                                })
+        #smach.StateMachine.add("GO_TO_WAIPOINT", sm_goto_waypoint,
+        #                        transitions={
+        #                            "succeeded" : "TURNE"
+        #                        })
         
         smach.StateMachine.add("TURNE", Turnaround(),
                                 transitions={
