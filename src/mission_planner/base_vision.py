@@ -36,14 +36,14 @@ class BaseVision:
              (self.__passed_direction == "E" and self.__current_direction == "S") or \
              (self.__passed_direction == "W" and self.__current_direction == "N"):
            
-           return 90.0 
+           return -90.0 
         
         if (self.__passed_direction == "N" and self.__current_direction == "W") or \
              (self.__passed_direction == "S" and self.__current_direction == "E") or \
              (self.__passed_direction == "E" and self.__current_direction == "N") or \
              (self.__passed_direction == "W" and self.__current_direction == "S"):
            
-           return -90.0 
+           return 90.0 
         
         if (self.__passed_direction == "N" and self.__current_direction == "S") or \
              (self.__passed_direction == "S" and self.__current_direction == "N") or \
