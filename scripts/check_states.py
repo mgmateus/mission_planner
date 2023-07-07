@@ -50,22 +50,16 @@ class WaypointCheck(smach.State, BaseController):
         else:
             return 'wait_for_waypoint'
         
-class YawCheck(smach.State, BaseController):
-    def __init__(self, target_yaw= None, threshold= 5.0):
-        smach.State.__init__(self, outcomes = ['wait_for_yaw'], input_keys = ['yaw'], output_keys = ['position','ready'])
+class TurnaroundCheck(smach.State, BaseController):
+    def __init__(self, threshold= 5.0):
+        smach.State.__init__(self, outcomes = ['wait_for_turne', 'ready'], input_keys = ['turne'])
         BaseController.__init__(self)
 
-        self.__target_yaw = target_yaw 
         self.__threshold = threshold
 
     def execute(self, userdata):
-        yaw = self.__target_yaw or userdata.yaw
         
-        if self.is_target_yaw(yaw, self.__threshold):
-            userdata.ready = True
-            rospy.logwarn(f"current: {self.get_current_yaw()}")
+        if self.is_target_turne(userdata.turne, self.__threshold):
             return 'ready'
         else:
-            userdata.ready = False
-            rospy.logwarn(f"target: {yaw} ---- current: {self.get_current_yaw()}")
-            return 'wait_for_yaw'
+            return 'wait_for_turne'

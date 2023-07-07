@@ -3,10 +3,6 @@ import smach
 from typing import *
 from mission_planner.base_controller import BaseController
 
-from mavros_msgs.msg import State
-from sensor_msgs.msg import Range
-from geometry_msgs.msg import PoseStamped
-
 
         
 class Armed(smach.State, BaseController):
@@ -49,10 +45,8 @@ class Navigate(smach.State, BaseController):
         BaseController.__init__(self)
 
         self.__position = position
-        self.__is_runing = False
         
     def execute(self, userdata):
-        rospy.logwarn(self.__position)
         x, y, z = self.__position 
         self.set_position(position_x= x, position_y= y, position_z= z)
         return 'wait_for_position'
@@ -68,32 +62,15 @@ class WaypointNavigate(smach.State, BaseController):
         self.set_position(position_x= x, position_y= y, position_z= z)
         return 'wait_for_waypoint'
     
-class Yaw(smach.State, BaseController):
-    def __init__(self, yaw= None):
-        smach.State.__init__(self, outcomes = ['turned', 'wait_for_yaw'], input_keys = ['yaw', 'ready'])
+class Turnaround(smach.State, BaseController):
+    def __init__(self):
+        smach.State.__init__(self, outcomes = ['wait_for_turne'], input_keys = ['turne'])
         BaseController.__init__(self)
-
-        self.__yaw = yaw
-        self.__is_runing = False
         
     def execute(self, userdata):
-        try:
-            if userdata.ready:
-                self.__is_runing = False
-                userdata.ready = False
-                return 'turned'
-        except:
-            pass
-        
-        if self.__is_runing:
-            return 'wait_for_yaw'
-        
-        yaw = self.__yaw or userdata.yaw
-        
-        self.save_position_to_yaw()
-        self.set_yaw(yaw)
-        self.__is_runing = True
-        return 'wait_for_yaw'
+        self.save_position_to_turne()
+        self.set_turne(userdata.turne)
+        return 'wait_for_turne'
     
 
 

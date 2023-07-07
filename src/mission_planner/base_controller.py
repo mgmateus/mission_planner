@@ -241,11 +241,11 @@ class BaseController():
         except rospy.ROSException as ros_exception:
             raise rospy.ROSException from ros_exception
         
-    def set_yaw(self, yaw: float = 0.0) -> bool:
+    def set_turne(self, turne: float = 0.0) -> bool:
         """This method publish a PoseStamped message in setpoint_position/local
         
         Keywords arguments:
-        yaw  -- The target orientation in z
+        turne  -- The target orientation in z
 
         Returns:
         True
@@ -253,8 +253,8 @@ class BaseController():
         try:
             self.set_custom_mode("GUIDED")
 
-            p_x, p_y, p_z = self.__yaw_position
-            x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(yaw))
+            p_x, p_y, p_z = self.__turne_position
+            x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(turne))
 
             pose = PoseStamped()
             pose.pose.position.x = p_x
@@ -267,17 +267,17 @@ class BaseController():
 
             self.__publisher_setpoint_local.publish(pose)
 
-            return self.__yaw_position
+            return self.__turne_position
         except rospy.ROSException as ros_exception:
             raise rospy.ROSException from ros_exception
         
-    def save_position_to_yaw(self) -> bool:
+    def save_position_to_turne(self) -> bool:
         """Save current position of the drone
         
         Returns:
-        __yaw_position    -- The current position of the drone
+        __turne_position    -- The current position of the drone
         """
-        self.__yaw_position = self.get_current_position()
+        self.__turne_position = self.get_current_position()
         return True
 
     def get_current_position(self) -> list:
@@ -291,15 +291,15 @@ class BaseController():
         p_z = self.current_position.pose.position.z
         return [p_x, p_y, p_z]
     
-    def get_current_yaw(self) -> float:
+    def get_current_turne(self) -> float:
         """Get current yaw of the drone
         
         Returns:
-        current_yaw    -- The current yaw of the drone in degrees
+        current_turne    -- The current turne of the drone in degrees
         """
         x, y, z, w = self.current_position.pose.orientation.x, self.current_position.pose.orientation.y, self.current_position.pose.orientation.z, self.current_position.pose.orientation.w
-        current_yaw = np.degrees(euler_from_quaternion([x, y, z, w]))[2]
-        return current_yaw
+        current_turne = np.degrees(euler_from_quaternion([x, y, z, w]))[2]
+        return current_turne
 
 
     def get_height(self) -> float:
@@ -349,12 +349,12 @@ class BaseController():
         eval = True if np.linalg.norm(target_position - current_position) <= threshold else False
         return eval
     
-    def is_target_yaw(self, target_yaw: float = 0.0, threshold: float = 0.0) -> bool:
-        """Get the evatuation of the drone difference to target yaw with a threashold
+    def is_target_turne(self, target_turne: float = 0.0, threshold: float = 0.0) -> bool:
+        """Get the evatuation of the drone difference to target turne with a threashold
         
         Returns:
-        eval    -- The evatuation of the drone difference to target yaw 
+        eval    -- The evatuation of the drone difference to target turne 
         """
-        current_yaw = self.get_current_yaw()
-        eval = True if target_yaw - current_yaw <= threshold else False
+        current_turne = self.get_current_turne()
+        eval = True if target_turne - current_turne <= threshold else False
         return eval

@@ -2,7 +2,7 @@ import rospy
 import smach
 from typing import *
 from check_states import *
-from states import *
+from scripts.controller_states import *
 from machines import *
 
 
@@ -237,3 +237,45 @@ def check_waypoints_navigation(target_height : float, waypoints : List) -> smach
                                })
         
     return sm 
+
+
+def check_turne(target_height : float, target_turne : float) -> smach.StateMachine:
+    """
+    Create the machine to test navigation with waypoints
+
+    Params:
+    target_height: altitude to take off
+    waypoints: waypoints as [x, y, z]
+    
+    Returns:
+    sm: the machine object machine 
+    """
+
+    sm = smach.StateMachine(outcomes=["succeeded"])
+    sm.userdata.turne = target_turne
+
+    with sm:
+        sm_mission_start = mission_start(target_height)
+
+        smach.StateMachine.add("FLYING", sm_mission_start,
+                                transitions={
+                                    "succeeded" : "TURNE"
+                                })
+        
+        smach.StateMachine.add("TURNE", Turnaround(),
+                                transitions={
+                                    "wait_for_turne" : "CHECK_TURNE"
+                                })
+        
+        smach.StateMachine.add("CHECK_TURNE", TurnaroundCheck(),
+                                transitions={
+                                    "wait_for_turne" : "CHECK_TURNE"
+                                    "ready" : "LAND"
+                                })
+        
+        smach.StateMachine.add("LAND", Land(),
+                               transitions={
+                                   "land": "succeeded"
+                               })
+        
+    return sm

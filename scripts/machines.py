@@ -3,7 +3,7 @@ import smach
 from smach import CBState
 from typing import *
 from check_states import *
-from states import *
+from scripts.controller_states import *
 
 
 def mission_start(target_height : float) -> smach.StateMachine:
@@ -40,8 +40,8 @@ def mission_start(target_height : float) -> smach.StateMachine:
                                     "ready": "succeeded"
                                 })
         
-    return sm
-        
+    return sm        
+    
     
 def goto(waypoint : List) -> smach.StateMachine:
     """
@@ -101,6 +101,12 @@ def goto_waypoint() -> smach.StateMachine:
 
 
     return sm
+
+
+
+
+
+
         
 
 
