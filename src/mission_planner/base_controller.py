@@ -207,7 +207,7 @@ class BaseController():
         except rospy.ServiceException as service_exception:
             raise rospy.ServiceException from service_exception
     
-    def set_custom_frame(self, custom_frame: int = 0):
+    def set_custom_frame(self, custom_frame: int = 1):
         """This method set a custom mode to UAV
 
         Keywords arguments:
@@ -311,7 +311,7 @@ class BaseController():
         """
         try:
             self.set_custom_mode("GUIDED")
-            #self.set_custom_frame(12)
+            self.set_custom_frame(20)
 
             p_x, p_y, p_z = self.__turne_position
             x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(turne))
