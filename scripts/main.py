@@ -17,11 +17,11 @@ if __name__ == "__main__":
 
     #sm_mission = check_flight(1.0) #take_off maroto
 
-    sm_mission = check_waypoints_navigation(height, waypoints) #teste do rangefinder
+    #sm_mission = check_waypoints_navigation(height, waypoints) #teste do rangefinder
 
     #sm_mission = check_turne(height, turne) #teste do giro
 
-    #sm_mission = check_navigation(height, target, turne) #teste do path com giro
+    sm_mission = check_navigation(height, target, turne) #teste do path com giro
 
 
     

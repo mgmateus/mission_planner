@@ -74,24 +74,24 @@ def check_navigation(target_height : float, waypoint : List, turne_to : float) -
         smach.StateMachine.add("CHECK_END", PositionCheck(target_position=check_position),
                                    transitions={
                                         'wait_for_position' : "GO_TO",
-                                        'ready' : "LAND"
+                                        'ready' : "TURNE"
                                     })
         
         sm_turne = turne(turne_to)
 
         smach.StateMachine.add("TURNE", sm_turne,
                                    transitions={
-                                        "succeeded" : "CHECK_END"
+                                        "succeeded" : "GO_TO_LAND"
                                     })
         
         sm_goto_land = goto(waypoint)
 
         smach.StateMachine.add("GO_TO_LAND", sm_goto_land,
                                    transitions={
-                                        "succeeded" : "CHECK_END"
+                                        "succeeded" : "CHECK_END_LAND"
                                     })
         
-        smach.StateMachine.add("CHECK_END", PositionCheck(target_position=check_position),
+        smach.StateMachine.add("CHECK_END_LAND", PositionCheck(target_position=check_position),
                                    transitions={
                                         'wait_for_position' : "GO_TO_LAND",
                                         'ready' : "LAND"
