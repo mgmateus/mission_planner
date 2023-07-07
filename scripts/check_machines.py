@@ -282,7 +282,7 @@ def check_turne(target_height : float, target_turne : float) -> smach.StateMachi
         smach.StateMachine.add("CHECK_TURNE", TurnaroundCheck(),
                                 transitions={
                                     "wait_for_turne" : "CHECK_TURNE",
-                                    "ready" : "succeeded"
+                                    "ready" : "STABILIZE_WAIPOINT"
                                 })
         
         smach.StateMachine.add("STABILIZE_WAIPOINT", sm_goto_waypoint,
