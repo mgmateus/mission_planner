@@ -219,10 +219,8 @@ class BaseController():
         Returns:
         response.mode_sent -- returns true if the service worked correctly.
         """
-        frame = SetMavFrame()
-        frame.mav_frame = custom_frame
         try:
-            response = self.__service_set_frame_proxy(frame)
+            response = self.__service_set_frame_proxy(custom_frame)
             return response.mode_sent
         except rospy.ServiceException as service_exception:
             raise rospy.ServiceException from service_exception
