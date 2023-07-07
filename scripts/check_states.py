@@ -9,7 +9,7 @@ from geometry_msgs.msg import PoseStamped
 
 class RangeFinderCheck(smach.State, BaseController):
     def __init__(self, target_height : float, threshold : float = 0.15):
-        smach.State.__init__(self, outcomes = ['wait_for_height', 'ready'])
+        smach.State.__init__(self, outcomes = ['wait_for_height', 'ready'], output_keys = ['waypoint'])
         BaseController.__init__(self)
 
         self.__target_height = target_height  
@@ -17,9 +17,9 @@ class RangeFinderCheck(smach.State, BaseController):
 
     def execute(self, userdata):
         if self.is_target_height(self.__target_height, self.__threshold):
+            userdata.waypoint = self.get_current_position()
             return 'ready'
         else:
-            userdata.ready = False
             return 'wait_for_height'
         
 class PositionCheck(smach.State, BaseController):
