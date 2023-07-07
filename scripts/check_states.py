@@ -1,5 +1,6 @@
 import rospy
 import smach
+import time
 from mission_planner.base_controller import BaseController
 
 from mavros_msgs.msg import State
@@ -46,6 +47,7 @@ class WaypointCheck(smach.State, BaseController):
 
     def execute(self, userdata):
         if self.is_target_position(userdata.waypoint, self.__threshold):
+            time.sleep(3)
             return 'ready'
         else:
             return 'wait_for_waypoint'

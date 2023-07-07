@@ -272,8 +272,7 @@ def check_turne(target_height : float, target_turne : float) -> smach.StateMachi
                                 transitions={
                                     "succeeded" : "TURNE"
                                 })
-        
-        time.sleep(5)
+    
         
         smach.StateMachine.add("TURNE", Turnaround(),
                                 transitions={
