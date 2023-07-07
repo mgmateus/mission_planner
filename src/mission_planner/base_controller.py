@@ -207,7 +207,7 @@ class BaseController():
         except rospy.ServiceException as service_exception:
             raise rospy.ServiceException from service_exception
     
-    def set_custom_frame(self, custom_frame: int = ""):
+    def set_custom_frame(self, custom_frame: str = ""):
         """This method set a custom mode to UAV
 
         Keywords arguments:
