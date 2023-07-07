@@ -11,7 +11,7 @@ if __name__ == "__main__":
     height = 0.6
     target = [0.25, 0.0, 0.6]
     turne = 90.0
-    waypoints = [[1.2, 0.0, height], [1.2, 0.0, 1.5], [0.0, 0.0, 1.5]]
+    waypoints = [[1.5, 0.0, height], [1.5, 0.0, 1.5], [0.0, 0.0, 1.5]]
 
     #sm_mission = mission_start(height) #take_off maroto sem land
 
