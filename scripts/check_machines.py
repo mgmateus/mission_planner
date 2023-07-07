@@ -252,7 +252,9 @@ def check_turne(target_height : float, target_turne : float) -> smach.StateMachi
     """
 
     sm = smach.StateMachine(outcomes=["succeeded"])
+    
     sm.userdata.turne = target_turne
+    sm.userdata.waypoint = None
 
     with sm:
         sm_mission_start = mission_start(target_height)

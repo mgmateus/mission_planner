@@ -16,7 +16,9 @@ def mission_start(target_height : float) -> smach.StateMachine:
     Returns:
     sm: the machine object machine 
     """
-    sm = smach.StateMachine(outcomes=["succeeded"])
+    sm = smach.StateMachine(outcomes=["succeeded"],
+                            input_keys=["waypoint"],
+                            output_keys=['waypoint'])
 
     with sm:
         smach.StateMachine.add("WAIT_ARMED",
@@ -84,7 +86,8 @@ def goto_waypoint() -> smach.StateMachine:
     """
 
     sm = smach.StateMachine(outcomes=["succeeded"],
-                            input_keys=["waypoint"])
+                            input_keys=["waypoint"],
+                            output_keys=['waypoint'])
 
     with sm:
         
