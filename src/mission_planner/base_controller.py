@@ -221,7 +221,7 @@ class BaseController():
         """
         try:
             response = self.__service_set_frame_proxy(custom_frame)
-            return response.mav_frame
+            return response.success
         except rospy.ServiceException as service_exception:
             raise rospy.ServiceException from service_exception
     
