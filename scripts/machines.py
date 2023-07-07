@@ -3,7 +3,7 @@ import smach
 from smach import CBState
 from typing import *
 from check_states import *
-from scripts.controller_states import *
+from controller_states import *
 
 
 def mission_start(target_height : float) -> smach.StateMachine:

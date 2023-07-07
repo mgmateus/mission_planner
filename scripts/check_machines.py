@@ -2,7 +2,7 @@ import rospy
 import smach
 from typing import *
 from check_states import *
-from scripts.controller_states import *
+from controller_states import *
 from machines import *
 
 
@@ -269,7 +269,7 @@ def check_turne(target_height : float, target_turne : float) -> smach.StateMachi
         
         smach.StateMachine.add("CHECK_TURNE", TurnaroundCheck(),
                                 transitions={
-                                    "wait_for_turne" : "CHECK_TURNE"
+                                    "wait_for_turne" : "CHECK_TURNE",
                                     "ready" : "LAND"
                                 })
         
