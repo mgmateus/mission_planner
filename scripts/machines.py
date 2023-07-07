@@ -50,7 +50,7 @@ def goto(waypoint : List) -> smach.StateMachine:
     Create the start machine navigate to waypoint
 
     Params:
-    target_height: altitude to take off
+    waypoint: position to move
 
     Returns:
     sm: the machine object machine 
@@ -106,7 +106,38 @@ def goto_waypoint() -> smach.StateMachine:
     return sm
 
 
+def turne(turne : float = 0.0) -> smach.StateMachine:
+    """
+    Create the start machine navigate to waypoint
 
+    Params:
+    waypoint: position to move
+
+    Returns:
+    sm: the machine object machine 
+    """
+
+    sm = smach.StateMachine(outcomes=["succeeded"],
+                            input_keys=["turne"],
+                            output_keys=['turne'])
+    
+    sm.userdate.turne = turne
+
+    with sm:
+        
+        smach.StateMachine.add("TURNE", Turnaround(),
+                                transitions={
+                                    "wait_for_turne" : "CHECK_TURNE"
+                                })
+        
+        smach.StateMachine.add("CHECK_TURNE", TurnaroundCheck(),
+                                transitions={
+                                    "wait_for_turne" : "CHECK_TURNE",
+                                    "ready" : "succeeded"
+                                })
+
+
+    return sm
 
 
 
