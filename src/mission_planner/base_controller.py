@@ -311,7 +311,7 @@ class BaseController():
         """
         try:
             self.set_custom_mode("GUIDED")
-            self.set_custom_frame(20)
+            self.set_custom_frame(16)
 
             p_x, p_y, p_z = self.__turne_position
             x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(turne))
