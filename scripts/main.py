@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     #sm_mission = check_move_on(height,target) #teste mover com velocidade, nao testado
 
-    sm_mission =  check_point_from_dist(height)
+    sm_mission =  check_point_from_dist(height, turne)
     
     # Execute SMACH plan
     outcome = sm_mission.execute()
