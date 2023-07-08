@@ -288,7 +288,7 @@ class BaseController():
         Output
         :return qx, qy, qz, qw: The orientation in quaternion [x,y,z,w] format
         """
-        a = np.rad(self.current_turne)
+        a = np.radians(self.current_turne)
         dx = np.cos(a) * step
         dy = np.sin(a) * step
         z = self.current_position[0]
