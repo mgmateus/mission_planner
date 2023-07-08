@@ -385,20 +385,12 @@ def check_point_from_dist(target_height : float, target_turne : float) -> smach.
                                     'ready' : "CHECK_END"
                                 })
         
-        @smach.cb_interface(input_keys=['waypoint'],   
-                            outcomes=['succeeded','continue'])
+        smach.StateMachine.add("CHECK_END", PositionCheck([1.0,0.0,target_height]),
+                                transitions={
+                                    'wait_for_position' : "GO_TO",
+                                    'ready' : "LAND"
+                                })
         
-        def move_cb(userdata):
-            if userdata.waypoint == [1.0,0.0,target_height]:
-                return 'succeeded'
-            else:
-                userdata.waypoint = [1.0,0.0,target_height]
-                return 'continue'
-        
-        smach.StateMachine.add('CHECK_END', smach.CBState(move_cb), 
-                        {'succeeded':'LAND',
-                         'continue':'GO_TO'
-                        })
 
         smach.StateMachine.add("LAND", Land(),
                                transitions={
