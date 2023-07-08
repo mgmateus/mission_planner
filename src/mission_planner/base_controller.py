@@ -291,7 +291,7 @@ class BaseController():
         a = np.radians(self.current_turne)
         dx = np.cos(a) * step
         dy = np.sin(a) * step
-        z = self.get_current_position()[0]
+        x,y,z = self.get_current_position()
 
         self.set_position(dx, dy, z)
 

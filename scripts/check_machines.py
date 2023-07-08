@@ -357,11 +357,11 @@ def check_point_from_dist(target_height : float) -> smach.StateMachine: #nao tes
     """
 
     sm = smach.StateMachine(outcomes=["succeeded"],
-                            input_keys=['height', 'step'],
+                            input_keys=['waypoint','height', 'step'],
                             output_keys=['waypoint'])
     
     sm.userdata.waypoint = None
-    sm.userdata.height = None
+    sm.userdata.height = target_height
     sm.userdata.step = 0.5
 
     with sm:
