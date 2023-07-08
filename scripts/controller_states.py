@@ -51,7 +51,7 @@ class Navigate(smach.State, BaseController):
         self.set_position(position_x= x, position_y= y, position_z= z)
         return 'wait_for_position'
 
-class VelocityNavigate(smach.State, BaseController):
+class VelocityNavigate(smach.State, BaseController): #Nao testado
     def __init__(self, x : float, z : float):
         smach.State.__init__(self, outcomes = ['wait_for_position'])
         BaseController.__init__(self)
@@ -72,6 +72,15 @@ class WaypointNavigate(smach.State, BaseController):
         rospy.logwarn(userdata.waypoint)
         x, y, z = userdata.waypoint 
         self.set_position(position_x= x, position_y= y, position_z= z)
+        return 'wait_for_waypoint'
+    
+class StepNavigate(smach.State, BaseController):
+    def __init__(self):
+        smach.State.__init__(self, outcomes = ['wait_for_waypoint'], input_keys = ['height', 'step'], output_keys = ['waypoint'])
+        BaseController.__init__(self)
+
+    def execute(self, userdata):
+        userdata.waypoint = self.point_from_distance_rotation(userdata.height, userdata.step)
         return 'wait_for_waypoint'
     
 class Turnaround(smach.State, BaseController):

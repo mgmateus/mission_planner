@@ -302,7 +302,7 @@ def check_turne(target_height : float, target_turne : float) -> smach.StateMachi
         
     return sm
 
-def check_move_on(target_height : float, waypoint : List) -> smach.StateMachine:
+def check_move_on(target_height : float, waypoint : List) -> smach.StateMachine: #nao testado
     """
     Create the machine to test navigation with discreted waypoint
 
@@ -342,3 +342,48 @@ def check_move_on(target_height : float, waypoint : List) -> smach.StateMachine:
                                })
         
     return sm
+
+
+def check_point_from_dist(target_height : float) -> smach.StateMachine: #nao testado
+    """
+    Create the machine to test navigation with discreted waypoint
+
+    Params:
+    target_height: altitude to take off
+    waypoint: waypoint as [x, y, z]
+
+    Returns:
+    sm: the machine object machine 
+    """
+
+    sm = smach.StateMachine(outcomes=["succeeded"],
+                            input_keys=['height', 'step'],
+                            output_keys=['waypoint'])
+    
+    sm.userdata.waypoint = None
+    sm.userdata.height = None
+    sm.userdata.step = 0.5
+
+    with sm:
+        sm_mission_start = mission_start(target_height)
+
+        smach.StateMachine.add("FLYING", sm_mission_start,
+                                   transitions={
+                                        "succeeded" : "GO_TO"
+                                    })
+        
+        smach.StateMachine.add("GO_TO", StepNavigate(),
+                                   transitions={
+                                        'wait_for_position' : "CHECK_POSITION"
+                                    })
+        
+        smach.StateMachine.add("CHECK_POSITION", WaypointCheck(),
+                                transitions={
+                                    'wait_for_waypoint' : "CHECK_POSITION",
+                                    'ready' : "LAND"
+                                })
+        
+        smach.StateMachine.add("LAND", Land(),
+                               transitions={
+                                   "land": "succeeded"
+                               })

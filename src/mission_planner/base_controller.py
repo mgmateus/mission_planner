@@ -43,10 +43,12 @@ class BaseController():
 
         return [qx, qy, qz, qw]
     
+    
     def __init__(self, services_timeout: float = 60) -> None:
         self.state = None
         self.rangefinder = None
         self.current_position = None
+        self.current_turne = 0
 
         self.__read_parameters()
         self.__init_services()
@@ -135,7 +137,7 @@ class BaseController():
 
     def __enable_mavros_topics(self) -> bool:
         """Enable the topics of mavros"""
-        self.set_custom_frame(16)
+        
         try:
             self.__service_streamrate_proxy(stream_id=0, message_rate=10, on_off=True)
             return True
@@ -246,6 +248,7 @@ class BaseController():
             return response.success
         except rospy.ServiceException as service_exception:
             raise rospy.ServiceException from service_exception
+        
 
     def set_position(self, position_x: float = 0.0, position_y: float = 0.0, \
                      position_z: float = 0.0) -> bool:
@@ -272,6 +275,27 @@ class BaseController():
             return True
         except rospy.ROSException as ros_exception:
             raise rospy.ROSException from ros_exception
+        
+    def point_from_distance_rotation(self, z : float, step : float = 0.1):
+        """
+        Convert an Euler angle to a quaternion.
+
+        Input
+        :param roll: The roll (rotation around x-axis) angle in radians.
+        :param pitch: The pitch (rotation around y-axis) angle in radians.
+        :param yaw: The yaw (rotation around z-axis) angle in radians.
+
+        Output
+        :return qx, qy, qz, qw: The orientation in quaternion [x,y,z,w] format
+        """
+        a = np.rad(self.current_turne)
+        dx = np.cos(a) * step
+        dy = np.sin(a) * step
+        z = self.current_position[0]
+
+        self.set_position(dx, dy, z)
+
+        return [dx, dy, z]
         
     def set_velocity(self, x: float = 0.0, z: float = 0.0) -> bool:
         """This method publish a PoseStamped message in setpoint_position/local
@@ -313,7 +337,7 @@ class BaseController():
         try:
             self.set_custom_mode("GUIDED")
             
-
+            self.current_position += turne
             p_x, p_y, p_z = self.__turne_position
             x, y, z, w = self.quaternion_from_euler(0, 0, np.radians(turne))
 
