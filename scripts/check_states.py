@@ -26,7 +26,7 @@ class RangeFinderCheck(smach.State, BaseController):
             return 'wait_for_height'
         
 class PositionCheck(smach.State, BaseController):
-    def __init__(self, target_position : List, threshold : float = 0.02):
+    def __init__(self, target_position : List, threshold : float = 0.1):
         smach.State.__init__(self, outcomes = ['wait_for_position', 'ready'])
         BaseController.__init__(self)
 
