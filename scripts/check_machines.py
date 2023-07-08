@@ -364,6 +364,7 @@ def check_point_from_dist(target_height : float, target_turne : float) -> smach.
     sm.userdata.height = target_height
     sm.userdata.step = 0.5
     sm.userdata.turne = target_turne
+    
 
     with sm:
         sm_mission_start = mission_start(target_height)
@@ -381,21 +382,16 @@ def check_point_from_dist(target_height : float, target_turne : float) -> smach.
         smach.StateMachine.add("CHECK_POSITION", WaypointCheck(),
                                 transitions={
                                     'wait_for_waypoint' : "CHECK_POSITION",
-                                    'ready' : "GO_TO_1"
+                                    'ready' : "CHECK_END"
                                 })
         
-        smach.StateMachine.add("GO_TO_1", StepNavigate(),
-                                   transitions={
-                                        'wait_for_waypoint' : "CHECK_POSITION_1"
-                                    })
-        
-        smach.StateMachine.add("CHECK_POSITION_1", WaypointCheck(),
+        smach.StateMachine.add("CHECK_END", PositionCheck([1.0,0.0,target_height]),
                                 transitions={
-                                    'wait_for_waypoint' : "CHECK_POSITION_1",
+                                    'wait_for_position' : "GO_TO",
                                     'ready' : "LAND"
                                 })
         
-        
+
         smach.StateMachine.add("LAND", Land(),
                                transitions={
                                    "land": "succeeded"

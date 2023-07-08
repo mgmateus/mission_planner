@@ -1,6 +1,8 @@
 import rospy
 import smach
 import time
+from typing import *
+
 from mission_planner.base_controller import BaseController
 
 from mavros_msgs.msg import State
@@ -24,7 +26,7 @@ class RangeFinderCheck(smach.State, BaseController):
             return 'wait_for_height'
         
 class PositionCheck(smach.State, BaseController):
-    def __init__(self, target_position : float, threshold : float = 0.02):
+    def __init__(self, target_position : List, threshold : float = 0.02):
         smach.State.__init__(self, outcomes = ['wait_for_position', 'ready'])
         BaseController.__init__(self)
 
