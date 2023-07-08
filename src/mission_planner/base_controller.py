@@ -293,7 +293,7 @@ class BaseController():
         dy = np.sin(a) * step
         x,y,z = self.get_current_position()
 
-        self.set_position(dx, dy, z)
+        self.set_position(x+dx, y+dy, z)
 
         return [dx, dy, z]
         
