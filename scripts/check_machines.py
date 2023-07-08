@@ -387,3 +387,5 @@ def check_point_from_dist(target_height : float) -> smach.StateMachine: #nao tes
                                transitions={
                                    "land": "succeeded"
                                })
+        
+    return sm
