@@ -276,7 +276,7 @@ class BaseController():
         except rospy.ROSException as ros_exception:
             raise rospy.ROSException from ros_exception
         
-    def point_from_distance_rotation(self, z : float, step : float = 0.1):
+    def point_from_distance_rotation(self, z : float = None, step : float = 0.1):
         """
         Convert an Euler angle to a quaternion.
 
@@ -291,7 +291,7 @@ class BaseController():
         a = np.radians(self.current_turne)
         dx = np.cos(a) * step
         dy = np.sin(a) * step
-        z = self.current_position[0]
+        z = z or self.get_current_position()[0]
 
         self.set_position(dx, dy, z)
 
