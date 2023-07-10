@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     #sm_mission = mission_start(height) #take_off maroto sem land
 
-    #sm_mission = check_flight(1.0) #take_off maroto
+    sm_mission = check_flight(1.0) #take_off maroto
 
     #sm_mission = check_waypoints_navigation(height, waypoints) #teste do rangefinder
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     #sm_mission = check_move_on(height,target) #teste mover com velocidade, nao testado
 
-    sm_mission =  check_point_from_dist(height, turne)
+    #sm_mission =  check_point_from_dist(height, turne)
     
     # Execute SMACH plan
     outcome = sm_mission.execute()
